@@ -868,6 +868,301 @@ nav {
  color: var(--text-muted);
 }
 
+/* ========== 学习系统样式 ========== */
+.course-badge {
+ position: absolute;
+ top: 12px;
+ right: 12px;
+ background: var(--success);
+ color: white;
+ padding: 6px 12px;
+ border-radius: var(--radius-sm);
+ font-size: 12px;
+ font-weight: 600;
+}
+
+.course-progress-badge {
+ position: absolute;
+ bottom: 12px;
+ right: 12px;
+ background: var(--primary-start);
+ color: white;
+ padding: 6px 12px;
+ border-radius: var(--radius-sm);
+ font-size: 12px;
+ font-weight: 600;
+}
+
+.course-card.completed {
+ border-color: var(--success);
+}
+
+.course-card.completed .course-cover {
+ background: var(--success-gradient);
+}
+
+.course-progress-bar {
+ margin-top: 12px;
+ height: 6px;
+ background: var(--bg-tertiary);
+ border-radius: 3px;
+ overflow: hidden;
+}
+
+.course-detail-content {
+ max-width: 800px;
+}
+
+.course-detail-body {
+ max-height: 60vh;
+ overflow-y: auto;
+}
+
+.course-cover-large {
+ width: 100%;
+ height: 200px;
+ background: var(--primary-gradient);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 96px;
+ border-radius: var(--radius-lg);
+ margin-bottom: 20px;
+ position: relative;
+}
+
+.course-badge-large {
+ position: absolute;
+ top: 16px;
+ right: 16px;
+ background: var(--success);
+ color: white;
+ padding: 12px 24px;
+ border-radius: var(--radius-sm);
+ font-size: 16px;
+ font-weight: 700;
+}
+
+.course-detail-title {
+ font-size: 28px;
+ font-weight: 700;
+ margin: 0 0 12px 0;
+ color: var(--text-primary);
+}
+
+.course-detail-desc {
+ font-size: 16px;
+ color: var(--text-secondary);
+ line-height: 1.8;
+ margin-bottom: 20px;
+}
+
+.course-detail-meta {
+ display: flex;
+ gap: 24px;
+ padding: 20px;
+ background: var(--bg-secondary);
+ border-radius: var(--radius-md);
+ margin-bottom: 24px;
+}
+
+.meta-item {
+ display: flex;
+ align-items: center;
+ gap: 8px;
+ font-size: 14px;
+ color: var(--text-secondary);
+}
+
+.meta-icon {
+ font-size: 20px;
+}
+
+.course-progress-section {
+ padding: 20px;
+ background: var(--bg-secondary);
+ border-radius: var(--radius-md);
+ margin-bottom: 24px;
+}
+
+.course-progress-section h3 {
+ margin: 0 0 12px 0;
+ font-size: 16px;
+ color: var(--text-primary);
+}
+
+.progress-bar-large {
+ height: 12px;
+ background: var(--bg-tertiary);
+ border-radius: 6px;
+ overflow: hidden;
+}
+
+.course-chapters {
+ margin-top: 24px;
+}
+
+.course-chapters h3 {
+ font-size: 18px;
+ margin-bottom: 16px;
+ color: var(--text-primary);
+}
+
+.chapters-list {
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+}
+
+.chapter-item {
+ display: flex;
+ align-items: center;
+ gap: 16px;
+ padding: 16px;
+ background: var(--bg-secondary);
+ border-radius: var(--radius-md);
+ transition: all var(--transition-fast);
+}
+
+.chapter-item:hover {
+ background: var(--bg-primary);
+ transform: translateX(4px);
+}
+
+.chapter-item.completed {
+ border-left: 3px solid var(--success);
+}
+
+.chapter-item.current {
+ border-left: 3px solid var(--primary-start);
+ background: var(--primary-light);
+}
+
+.chapter-item.locked {
+ opacity: 0.5;
+}
+
+.chapter-number {
+ width: 32px;
+ height: 32px;
+ background: var(--primary-gradient);
+ border-radius: 50%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-weight: 600;
+ color: white;
+}
+
+.chapter-content {
+ flex: 1;
+}
+
+.chapter-title {
+ font-weight: 600;
+ color: var(--text-primary);
+ margin-bottom: 4px;
+}
+
+.chapter-duration {
+ font-size: 12px;
+ color: var(--text-muted);
+}
+
+.chapter-status {
+ font-size: 20px;
+}
+
+.course-actions {
+ margin-top: 24px;
+ display: flex;
+ gap: 12px;
+}
+
+.stats-grid {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 16px;
+ margin-bottom: 24px;
+}
+
+.stat-card {
+ display: flex;
+ align-items: center;
+ gap: 16px;
+ padding: 20px;
+ background: var(--bg-secondary);
+ border-radius: var(--radius-md);
+}
+
+.stat-icon {
+ font-size: 40px;
+}
+
+.stat-info .stat-value {
+ font-size: 28px;
+ font-weight: 700;
+ color: var(--primary-start);
+ margin-bottom: 4px;
+}
+
+.stat-info .stat-label {
+ font-size: 14px;
+ color: var(--text-secondary);
+}
+
+.achievements-grid {
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ gap: 12px;
+}
+
+.achievement-card {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+ padding: 16px;
+ background: var(--bg-secondary);
+ border-radius: var(--radius-md);
+ transition: all var(--transition-fast);
+}
+
+.achievement-card:hover {
+ transform: translateY(-4px);
+}
+
+.achievement-card.unlocked {
+ border: 2px solid var(--success);
+}
+
+.achievement-card.locked {
+ opacity: 0.5;
+}
+
+.achievement-icon {
+ font-size: 32px;
+}
+
+.achievement-info .achievement-title {
+ font-weight: 600;
+ color: var(--text-primary);
+ margin-bottom: 4px;
+}
+
+.achievement-info .achievement-desc {
+ font-size: 12px;
+ color: var(--text-secondary);
+}
+
+.btn-success {
+ background: var(--success);
+ color: white;
+}
+
+.btn-success:hover {
+ background: #22c55e;
+}
+
 /* ========== 工作台样式 ========== */
 
 .profile-header {
@@ -3843,26 +4138,400 @@ function submitPost() {
 function loadCourses() {
  const content = document.getElementById('learn-content');
  const count = document.getElementById('courses-count');
- 
+
  if(content) {
- content.innerHTML = mockData.courses.map(course => `
- <div class="course-card">
- <div class="course-cover">${course.icon}</div>
+ content.innerHTML = mockData.courses.map(course => {
+   // 检查用户是否已开始学习
+   const userProgress = getUserCourseProgress(course.id);
+   const progressPercent = userProgress ? userProgress.progress : 0;
+   const isStarted = progressPercent > 0;
+   const isCompleted = progressPercent === 100;
+
+   return `
+ <div class="course-card ${isCompleted ? 'completed' : ''}" onclick="showCourseDetail(${course.id})">
+ <div class="course-cover">
+  ${course.icon}
+  ${isCompleted ? '<span class="course-badge">✅ 已完成</span>' : ''}
+  ${isStarted && !isCompleted ? `<span class="course-progress-badge">${progressPercent}%</span>` : ''}
+ </div>
  <div class="course-body">
- <div class="course-title">${course.title}</div>
- <div class="course-desc">${course.desc}</div>
- <div class="course-meta">
- <span>📚 ${course.duration}</span>
- <span>👥 ${course.students} 人在学</span>
- <span>⭐ ${course.rating}</span>
+  <div class="course-title">${course.title}</div>
+  <div class="course-desc">${course.desc}</div>
+  <div class="course-meta">
+   <span>📚 ${course.duration}</span>
+   <span>👥 ${course.students} 人在学</span>
+   <span>⭐ ${course.rating}</span>
+  </div>
+  ${isStarted ? `
+   <div class="course-progress-bar">
+    <div class="progress-fill" style="width: ${progressPercent}%"></div>
+   </div>
+  ` : ''}
  </div>
  </div>
- </div>
- `).join('');
+ `;
+ }).join('');
  }
- 
+
  if(count) {
- count.textContent = mockData.courses.length + ' 门课程';
+  count.textContent = mockData.courses.length + ' 门课程';
+ }
+}
+
+// 获取用户课程进度
+function getUserCourseProgress(courseId) {
+ if(!currentUser) return null;
+
+ const userProgress = JSON.parse(localStorage.getItem('user_course_progress') || '{}');
+ return userProgress[currentUser.id]?.[courseId] || null;
+}
+
+// 保存用户课程进度
+function saveUserCourseProgress(courseId, progress, chapter, duration) {
+ if(!currentUser) return;
+
+ const userProgress = JSON.parse(localStorage.getItem('user_course_progress') || '{}');
+ if(!userProgress[currentUser.id]) {
+  userProgress[currentUser.id] = {};
+ }
+
+ userProgress[currentUser.id][courseId] = {
+  courseId,
+  progress,
+  currentChapter: chapter || 0,
+  totalDuration: duration || 0,
+  lastStudyTime: new Date().toISOString()
+ };
+
+ localStorage.setItem('user_course_progress', JSON.stringify(userProgress));
+}
+
+// 显示课程详情
+function showCourseDetail(courseId) {
+ const course = mockData.courses.find(c => c.id === courseId);
+ if(!course) return;
+
+ const userProgress = getUserCourseProgress(courseId);
+ const progressPercent = userProgress ? userProgress.progress : 0;
+ const isStarted = progressPercent > 0;
+ const isCompleted = progressPercent === 100;
+
+ const modalHtml = `
+ <div class="modal" id="course-detail-modal" onclick="if(event.target===this) closeCourseDetail()">
+  <div class="modal-content course-detail-content">
+   <button class="modal-close" onclick="closeCourseDetail()">✕</button>
+   <div class="course-detail-body">
+    <div class="course-cover-large">
+     ${course.icon}
+     ${isCompleted ? '<span class="course-badge-large">✅ 已完成</span>' : ''}
+    </div>
+    <h2 class="course-detail-title">${course.title}</h2>
+    <p class="course-detail-desc">${course.desc}</p>
+    
+    <div class="course-detail-meta">
+     <div class="meta-item">
+      <span class="meta-icon">📚</span>
+      <span>${course.duration}</span>
+     </div>
+     <div class="meta-item">
+      <span class="meta-icon">👥</span>
+      <span>${course.students} 人在学</span>
+     </div>
+     <div class="meta-item">
+      <span class="meta-icon">⭐</span>
+      <span>${course.rating}</span>
+     </div>
+    </div>
+    
+    ${isStarted ? `
+    <div class="course-progress-section">
+     <h3>学习进度：${progressPercent}%</h3>
+     <div class="progress-bar-large">
+      <div class="progress-fill" style="width: ${progressPercent}%"></div>
+     </div>
+    </div>
+    ` : ''}
+    
+    <div class="course-chapters">
+     <h3>课程章节</h3>
+     <div class="chapters-list">
+      ${generateCourseChapters(course)}
+     </div>
+    </div>
+    
+    <div class="course-actions">
+     ${isCompleted ? `
+      <button class="btn-success" onclick="retakeCourse(${course.id})">重新学习</button>
+     ` : isStarted ? `
+      <button class="btn-primary" onclick="continueCourse(${course.id})">继续学习</button>
+     ` : `
+      <button class="btn-primary" onclick="startCourse(${course.id})">开始学习</button>
+     `}
+    </div>
+   </div>
+  </div>
+ </div>
+ `;
+
+ // 移除旧的模态框
+ const oldModal = document.getElementById('course-detail-modal');
+ if(oldModal) {
+  oldModal.remove();
+ }
+
+ // 添加新的模态框
+ document.body.insertAdjacentHTML('beforeend', modalHtml);
+ document.getElementById('course-detail-modal').style.display = 'block';
+}
+
+// 生成课程章节
+function generateCourseChapters(course) {
+ const chapters = getCourseChapters(course.id);
+ return chapters.map((chapter, index) => {
+  const userProgress = getUserCourseProgress(course.id);
+  const currentChapter = userProgress ? userProgress.currentChapter : 0;
+  const isCompleted = index < currentChapter;
+  const isCurrent = index === currentChapter;
+  const isLocked = index > currentChapter;
+
+  return `
+   <div class="chapter-item ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''} ${isLocked ? 'locked' : ''}">
+    <div class="chapter-number">${index + 1}</div>
+    <div class="chapter-content">
+     <div class="chapter-title">${chapter.title}</div>
+     <div class="chapter-duration">${chapter.duration}</div>
+    </div>
+    <div class="chapter-status">
+     ${isCompleted ? '✅' : isCurrent ? '📖' : isLocked ? '🔒' : ''}
+    </div>
+   </div>
+  `;
+ }).join('');
+}
+
+// 获取课程章节
+function getCourseChapters(courseId) {
+ const chaptersMap = {
+  1: [
+   { title: 'OpenClaw 简介', duration: '10分钟' },
+   { title: '安装与配置', duration: '15分钟' },
+   { title: '第一个 Skill', duration: '20分钟' },
+   { title: '实践项目', duration: '30分钟' }
+  ],
+  2: [
+   { title: 'Prompt 基础', duration: '15分钟' },
+   { title: '高级技巧', duration: '20分钟' },
+   { title: '实际案例', duration: '25分钟' }
+  ],
+  3: [
+   { title: '工作流设计原理', duration: '15分钟' },
+   { title: '常用模式', duration: '20分钟' },
+   { title: '优化技巧', duration: '20分钟' },
+   { title: '项目实践', duration: '35分钟' }
+  ],
+  4: [
+   { title: '用户需求分析', duration: '15分钟' },
+   { title: '产品设计', duration: '20分钟' },
+   { title: '用户测试', duration: '15分钟' }
+  ]
+ };
+
+ return chaptersMap[courseId] || [];
+}
+
+// 关闭课程详情
+function closeCourseDetail() {
+ const modal = document.getElementById('course-detail-modal');
+ if(modal) {
+  modal.remove();
+ }
+}
+
+// 开始学习
+function startCourse(courseId) {
+ if(!currentUser) {
+  showToast('请先登录', 'warning');
+  return;
+ }
+
+ showToast('开始学习...', 'info');
+ saveUserCourseProgress(courseId, 10, 0, 10); // 初始进度 10%
+ closeCourseDetail();
+ loadCourses();
+ showToast('学习开始！继续加油 💪', 'success');
+
+ // 更新用户统计
+ currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
+ saveCurrentUser();
+}
+
+// 继续学习
+function continueCourse(courseId) {
+ if(!currentUser) {
+  showToast('请先登录', 'warning');
+  return;
+ }
+
+ const userProgress = getUserCourseProgress(courseId);
+ if(!userProgress) return;
+
+ const newProgress = Math.min(100, userProgress.progress + 10);
+ const newChapter = userProgress.currentChapter + 1;
+
+ showToast('学习进行中...', 'info');
+ saveUserCourseProgress(courseId, newProgress, newChapter, userProgress.totalDuration + 10);
+ closeCourseDetail();
+ loadCourses();
+ showToast('学习进度已更新！继续加油 💪', 'success');
+
+ // 更新用户统计
+ currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
+ saveCurrentUser();
+
+ // 检查是否完成
+ if(newProgress >= 100) {
+  checkCourseCompletion(courseId);
+ }
+}
+
+// 重新学习
+function retakeCourse(courseId) {
+ if(!confirm('确定要重新学习这门课程吗？之前的进度将被清除。')) return;
+
+ localStorage.removeItem('user_course_progress');
+ closeCourseDetail();
+ loadCourses();
+ showToast('已重置课程进度', 'info');
+}
+
+// 检查课程完成
+function checkCourseCompletion(courseId) {
+ const course = mockData.courses.find(c => c.id === courseId);
+ if(!course || !currentUser) return;
+
+ const userProgress = getUserCourseProgress(courseId);
+ if(userProgress && userProgress.progress >= 100) {
+  // 记录完成成就
+  const completedCourses = JSON.parse(localStorage.getItem('completed_courses') || '{}');
+  if(!completedCourses[currentUser.id]) {
+   completedCourses[currentUser.id] = [];
+  }
+
+  if(!completedCourses[currentUser.id].includes(courseId)) {
+   completedCourses[currentUser.id].push(courseId);
+   localStorage.setItem('completed_courses', JSON.stringify(completedCourses));
+   showToast(`🎉 恭喜！你完成了「${course.title}」课程！`, 'success');
+  }
+ }
+}
+
+// 加载学习统计
+function loadLearningStats() {
+ if(!currentUser) return;
+
+ const completedCourses = JSON.parse(localStorage.getItem('completed_courses') || '{}');
+ const userCompleted = completedCourses[currentUser.id] || [];
+
+ const statsHtml = `
+  <div class="stats-grid">
+   <div class="stat-card">
+    <div class="stat-icon">📚</div>
+    <div class="stat-info">
+     <div class="stat-value">${userCompleted.length}</div>
+     <div class="stat-label">已完成课程</div>
+    </div>
+   </div>
+   <div class="stat-card">
+    <div class="stat-icon">⏱️</div>
+    <div class="stat-info">
+     <div class="stat-value">${calculateStudyTime()}</div>
+     <div class="stat-label">学习时长（分钟）</div>
+    </div>
+   </div>
+   <div class="stat-card">
+    <div class="stat-icon">🎯</div>
+    <div class="stat-info">
+     <div class="stat-value">${calculateAchievementPoints()}</div>
+     <div class="stat-label">成就点数</div>
+    </div>
+   </div>
+  </div>
+ `;
+
+ const container = document.getElementById('learning-stats');
+ if(container) {
+  container.innerHTML = statsHtml;
+ }
+}
+
+// 计算学习时长
+function calculateStudyTime() {
+ if(!currentUser) return 0;
+
+ const userProgress = JSON.parse(localStorage.getItem('user_course_progress') || '{}');
+ const progress = userProgress[currentUser.id] || {};
+
+ let totalTime = 0;
+ Object.values(progress).forEach(p => {
+  totalTime += p.totalDuration || 0;
+ });
+
+ return totalTime;
+}
+
+// 计算成就点数
+function calculateAchievementPoints() {
+ if(!currentUser) return 0;
+
+ const completedCourses = JSON.parse(localStorage.getItem('completed_courses') || '{}');
+ const userCompleted = completedCourses[currentUser.id] || [];
+
+ // 每完成一门课程获得 100 点
+ return userCompleted.length * 100;
+}
+
+// 加载成就
+function loadAchievements() {
+ if(!currentUser) return;
+
+ const achievements = [
+  { id: 'first_course', title: '初学者', desc: '完成第一门课程', icon: '🎓', unlocked: false },
+  { id: 'completed_3', title: '学霸', desc: '完成 3 门课程', icon: '🏆', unlocked: false },
+  { id: 'completed_5', title: '大师', desc: '完成 5 门课程', icon: '👑', unlocked: false },
+  { id: 'study_60min', title: '勤奋', desc: '学习时长达到 60 分钟', icon: '⏰', unlocked: false },
+  { id: 'study_120min', title: '毅力', desc: '学习时长达到 120 分钟', icon: '💪', unlocked: false }
+ ];
+
+ const completedCourses = JSON.parse(localStorage.getItem('completed_courses') || '{}');
+ const userCompleted = completedCourses[currentUser.id] || [];
+
+ const studyTime = calculateStudyTime();
+
+ // 检查成就解锁
+ achievements[0].unlocked = userCompleted.length >= 1;
+ achievements[1].unlocked = userCompleted.length >= 3;
+ achievements[2].unlocked = userCompleted.length >= 5;
+ achievements[3].unlocked = studyTime >= 60;
+ achievements[4].unlocked = studyTime >= 120;
+
+ const achievementsHtml = `
+  <h3>🏅 成就</h3>
+  <div class="achievements-grid">
+   ${achievements.map(achievement => `
+    <div class="achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'}">
+     <div class="achievement-icon">${achievement.unlocked ? achievement.icon : '🔒'}</div>
+     <div class="achievement-info">
+      <div class="achievement-title">${achievement.title}</div>
+      <div class="achievement-desc">${achievement.desc}</div>
+     </div>
+    </div>
+   `).join('')}
+  </div>
+ `;
+
+ const container = document.getElementById('achievements-container');
+ if(container) {
+  container.innerHTML = achievementsHtml;
  }
 }
 
@@ -3871,16 +4540,25 @@ function loadCourses() {
 function loadProfileContent() {
  const content = document.getElementById('profile-content');
  if(!content || !currentUser) {
- content.innerHTML = `
+  content.innerHTML = `
  <div style="text-align:center; padding: 60px 20px;">
  <div style="font-size: 64px; margin-bottom: 16px;">🔑</div>
  <div style="font-size: 18px; color: var(--text-secondary); margin-bottom: 16px;">请先登录</div>
  <button class="btn-primary" onclick="showAuthModal()">登录</button>
  </div>
  `;
- return;
+  return;
  }
- 
+
+ // 加载学习统计
+ loadLearningStats();
+
+ // 获取统计数据
+ const installedSkills = JSON.parse(localStorage.getItem('installed_skills') || '[]');
+ const likedPosts = JSON.parse(localStorage.getItem('liked_posts') || '[]');
+ const completedCourses = JSON.parse(localStorage.getItem('completed_courses') || '{}');
+ const userCompleted = completedCourses[currentUser.id] || [];
+
  content.innerHTML = `
  <div class="profile-header">
  <div class="profile-avatar">${currentUser.avatar}</div>
@@ -3888,48 +4566,38 @@ function loadProfileContent() {
  <div class="profile-email">${currentUser.email}</div>
  <div class="profile-stats">
  <div class="profile-stat">
- <div class="profile-stat-value">12</div>
- <div class="profile-stat-label">我的 Skills</div>
+ <div class="profile-stat-value">${installedSkills.length}</div>
+ <div class="profile-stat-label">已安装 Skills</div>
  </div>
  <div class="profile-stat">
- <div class="profile-stat-value">34</div>
- <div class="profile-stat-label">收藏</div>
+ <div class="profile-stat-value">${userCompleted.length}</div>
+ <div class="profile-stat-label">已完成课程</div>
  </div>
  <div class="profile-stat">
- <div class="profile-stat-value">156</div>
- <div class="profile-stat-label">点赞</div>
+ <div class="profile-stat-value">${likedPosts.length}</div>
+ <div class="profile-stat-label">点赞数</div>
  </div>
  </div>
  </div>
  
  <div class="stats-section">
- <h3 style="margin-bottom:16px;">📊 学习进度</h3>
- <div style="padding:12px; background:var(--bg-primary); border-radius:var(--radius-md); margin-bottom:12px;">
- <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
- <span>AI 应用开发入门</span>
- <span>60%</span>
+  <h3 style="margin-bottom:16px;">📊 学习统计</h3>
+  <div id="learning-stats"></div>
  </div>
- <div style="height:8px; background:var(--bg-tertiary); border-radius:4px; overflow:hidden;">
- <div style="width:60%; height:100%; background:var(--primary-gradient);"></div>
- </div>
- </div>
- <div style="padding:12px; background:var(--bg-primary); border-radius:var(--radius-md);">
- <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
- <span>Prompt 工程实战</span>
- <span>30%</span>
- </div>
- <div style="height:8px; background:var(--bg-tertiary); border-radius:4px; overflow:hidden;">
- <div style="width:30%; height:100%; background:var(--primary-gradient);"></div>
- </div>
- </div>
+ 
+ <div class="stats-section">
+  <div id="achievements-container"></div>
  </div>
  
  <div class="stats-section">
  <h3 style="margin-bottom:16px;">⚙️ 设置</h3>
- <button class="btn-primary" onclick="showToast('功能开发中...')">编辑资料</button>
- <button class="btn-secondary" style="margin-left:12px;" onclick="showToast('功能开发中...')">修改密码</button>
+ <button class="btn-primary" onclick="openProfileModal()">编辑资料</button>
+ <button class="btn-danger" onclick="handleLogout()">退出登录</button>
  </div>
  `;
+
+ // 加载成就
+ loadAchievements();
 }
 
 // 监听页面切换，加载工作台
