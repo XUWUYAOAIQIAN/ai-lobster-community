@@ -1,0 +1,27 @@
+# Ignore screenshots
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.log
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore secrets
+.secrets/
+*.key
+*.pem
+
+# Ignore node_modules (if any)
+node_modules/
+
+# Ignore backup files
+*.backup
+*.bak
