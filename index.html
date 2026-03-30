@@ -1128,6 +1128,141 @@ nav {
  color: var(--success);
 }
 
+/* ========== 用户系统样式 ========== */
+.auth-tabs {
+ display: flex;
+ gap: 12px;
+ margin-bottom: 20px;
+ border-bottom: 1px solid var(--border-color);
+ padding-bottom: 12px;
+}
+
+.auth-tab {
+ flex: 1;
+ padding: 10px;
+ border: none;
+ background: none;
+ cursor: pointer;
+ font-size: 16px;
+ font-weight: 500;
+ color: var(--text-secondary);
+ transition: all var(--transition-fast);
+ border-bottom: 2px solid transparent;
+}
+
+.auth-tab:hover {
+ color: var(--text-primary);
+}
+
+.auth-tab.active {
+ color: var(--primary-start);
+ border-bottom-color: var(--primary-start);
+}
+
+.profile-content {
+ max-width: 600px;
+}
+
+.profile-avatar-section {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 16px;
+ margin-bottom: 24px;
+ padding-bottom: 24px;
+ border-bottom: 1px solid var(--border-color);
+}
+
+.profile-avatar {
+ width: 100px;
+ height: 100px;
+ border-radius: 50%;
+ background: var(--bg-secondary);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 48px;
+ border: 3px solid var(--primary-start);
+ cursor: pointer;
+ transition: transform var(--transition-base);
+}
+
+.profile-avatar:hover {
+ transform: scale(1.05);
+}
+
+.profile-body {
+ margin-bottom: 24px;
+}
+
+.profile-stats {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 16px;
+ margin-top: 24px;
+ padding-top: 24px;
+ border-top: 1px solid var(--border-color);
+}
+
+.stat-item {
+ text-align: center;
+ padding: 16px;
+ background: var(--bg-secondary);
+ border-radius: var(--radius-md);
+}
+
+.stat-value {
+ font-size: 24px;
+ font-weight: 700;
+ color: var(--primary-start);
+ margin-bottom: 8px;
+}
+
+.stat-label {
+ font-size: 14px;
+ color: var(--text-secondary);
+}
+
+.profile-footer {
+ display: flex;
+ gap: 12px;
+ justify-content: flex-end;
+ padding-top: 20px;
+ border-top: 1px solid var(--border-color);
+}
+
+/* 头像选择器 */
+.avatar-grid {
+ display: grid;
+ grid-template-columns: repeat(6, 1fr);
+ gap: 12px;
+ margin-top: 16px;
+}
+
+.avatar-option {
+ width: 50px;
+ height: 50px;
+ border-radius: 50%;
+ background: var(--bg-secondary);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 28px;
+ cursor: pointer;
+ transition: all var(--transition-fast);
+ border: 2px solid var(--border-color);
+}
+
+.avatar-option:hover {
+ transform: scale(1.1);
+ border-color: var(--primary-start);
+}
+
+.avatar-option.selected {
+ border-color: var(--primary-start);
+ background: var(--primary-light);
+}
+
 .btn-danger {
  background: var(--error);
  color: white;
@@ -2164,22 +2299,107 @@ nav {
  <div class="modal-content">
  <button class="modal-close" onclick="closeAuthModal()">✕</button>
  <h2 class="modal-title">🔑 登录 / 注册</h2>
+ 
+ <!-- 登录/注册切换标签 -->
+ <div class="auth-tabs">
+  <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">登录</button>
+  <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">注册</button>
+ </div>
+ 
  <div style="margin-top: 24px">
- <div class="form-group">
- <label class="form-label" for="auth-email">邮箱</label>
- <input type="email" id="auth-email" class="form-input" placeholder="请输入邮箱地址">
- <div class="form-error" id="email-error"></div>
+  <!-- 登录表单 -->
+  <div id="login-form">
+   <div class="form-group">
+    <label class="form-label" for="auth-email">邮箱</label>
+    <input type="email" id="auth-email" class="form-input" placeholder="请输入邮箱地址">
+    <div class="form-error" id="email-error"></div>
+   </div>
+   <div class="form-group">
+    <label class="form-label" for="auth-password">密码</label>
+    <input type="password" id="auth-password" class="form-input" placeholder="请输入密码（至少6位）">
+    <div class="form-error" id="password-error"></div>
+   </div>
+   <button class="btn-primary" style="width:100%;margin-top:16px" onclick="handleAuth()">登录</button>
+  </div>
+  
+  <!-- 注册表单 -->
+  <div id="register-form" style="display:none;">
+   <div class="form-group">
+    <label class="form-label" for="reg-username">用户名</label>
+    <input type="text" id="reg-username" class="form-input" placeholder="请输入用户名">
+    <div class="form-error" id="username-error"></div>
+   </div>
+   <div class="form-group">
+    <label class="form-label" for="reg-email">邮箱</label>
+    <input type="email" id="reg-email" class="form-input" placeholder="请输入邮箱地址">
+    <div class="form-error" id="reg-email-error"></div>
+   </div>
+   <div class="form-group">
+    <label class="form-label" for="reg-password">密码</label>
+    <input type="password" id="reg-password" class="form-input" placeholder="请输入密码（至少6位）">
+    <div class="form-error" id="reg-password-error"></div>
+   </div>
+   <div class="form-group">
+    <label class="form-label" for="reg-confirm-password">确认密码</label>
+    <input type="password" id="reg-confirm-password" class="form-input" placeholder="请再次输入密码">
+    <div class="form-error" id="confirm-password-error"></div>
+   </div>
+   <button class="btn-primary" style="width:100%;margin-top:16px" onclick="handleRegister()">注册</button>
+  </div>
  </div>
- <div class="form-group">
- <label class="form-label" for="auth-password">密码</label>
- <input type="password" id="auth-password" class="form-input" placeholder="请输入密码（至少6位）">
- <div class="form-error" id="password-error"></div>
  </div>
- <button class="btn-primary" style="width:100%;margin-top:16px" onclick="handleAuth()">登录</button>
- <div style="text-align:center; margin-top:16px; font-size:14px; color:var(--text-muted);">
- 还没有账号？<a href="#" onclick="showToast('注册功能开发中...')">立即注册</a>
- </div>
- </div>
+</div>
+
+<!-- 用户资料模态框 -->
+<div class="modal" id="profile-modal" onclick="if(event.target===this) closeProfileModal()">
+ <div class="modal-content profile-content">
+  <button class="modal-close" onclick="closeProfileModal()">✕</button>
+  <h2 class="modal-title">👤 个人资料</h2>
+  
+  <div class="profile-body">
+   <!-- 头像区域 -->
+   <div class="profile-avatar-section">
+    <div class="profile-avatar" id="profile-avatar-display">🦞</div>
+    <button class="btn-secondary" onclick="changeAvatar()">更换头像</button>
+   </div>
+   
+   <!-- 资料表单 -->
+   <div class="form-group">
+    <label class="form-label">用户名</label>
+    <input type="text" id="profile-username" class="form-input">
+   </div>
+   
+   <div class="form-group">
+    <label class="form-label">邮箱</label>
+    <input type="email" id="profile-email" class="form-input" readonly>
+   </div>
+   
+   <div class="form-group">
+    <label class="form-label">个人简介</label>
+    <textarea id="profile-bio" class="form-input" rows="3" placeholder="介绍一下你自己..."></textarea>
+   </div>
+   
+   <!-- 统计信息 -->
+   <div class="profile-stats">
+    <div class="stat-item">
+     <div class="stat-value" id="stat-installed-skills">0</div>
+     <div class="stat-label">已安装 Skills</div>
+    </div>
+    <div class="stat-item">
+     <div class="stat-value" id="stat-skills-used">0</div>
+     <div class="stat-label">使用次数</div>
+    </div>
+    <div class="stat-item">
+     <div class="stat-value" id="stat-join-days">0</div>
+     <div class="stat-label">加入天数</div>
+    </div>
+   </div>
+  </div>
+  
+  <div class="profile-footer">
+   <button class="btn-secondary" onclick="closeProfileModal()">取消</button>
+   <button class="btn-primary" onclick="saveProfile()">保存</button>
+  </div>
  </div>
 </div>
 
@@ -2733,11 +2953,8 @@ async function handleAuth() {
 
 function handleLoginClick() {
  if(currentUser) {
- // 登出
- currentUser = null;
- sessionStorage.removeItem('lobster_user');
- updateLoginButton();
- showToast('已退出登录');
+ // 如果已登录，显示个人资料
+ openProfileModal();
  } else {
  showAuthModal();
  }
@@ -2747,11 +2964,191 @@ function updateLoginButton() {
  const btn = document.getElementById('btn-login');
  if(currentUser) {
  btn.textContent = currentUser.avatar + ' ' + currentUser.username;
- btn.title = '点击退出登录';
+ btn.title = '点击查看个人资料';
  } else {
  btn.textContent = '🔑';
  btn.title = '登录';
  }
+}
+
+// ========== 用户系统功能 ==========
+
+// 切换登录/注册标签
+function switchAuthTab(tab) {
+ const loginTab = document.getElementById('tab-login');
+ const registerTab = document.getElementById('tab-register');
+ const loginForm = document.getElementById('login-form');
+ const registerForm = document.getElementById('register-form');
+
+ // 清除错误信息
+ clearAllErrors();
+
+ if(tab === 'login') {
+  loginTab.classList.add('active');
+  registerTab.classList.remove('active');
+  loginForm.style.display = 'block';
+  registerForm.style.display = 'none';
+ } else {
+  loginTab.classList.remove('active');
+  registerTab.classList.add('active');
+  loginForm.style.display = 'none';
+  registerForm.style.display = 'block';
+ }
+}
+
+// 清除所有错误信息
+function clearAllErrors() {
+ const errors = document.querySelectorAll('.form-error');
+ errors.forEach(error => error.textContent = '');
+}
+
+// 处理注册
+function handleRegister() {
+ const username = document.getElementById('reg-username').value.trim();
+ const email = document.getElementById('reg-email').value.trim();
+ const password = document.getElementById('reg-password').value;
+ const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+ // 清除错误信息
+ clearAllErrors();
+
+ // 验证用户名
+ if(!username) {
+  document.getElementById('username-error').textContent = '请输入用户名';
+  return;
+ }
+ if(username.length < 2) {
+  document.getElementById('username-error').textContent = '用户名至少需要2个字符';
+  return;
+ }
+
+ // 验证邮箱
+ if(!email) {
+  document.getElementById('reg-email-error').textContent = '请输入邮箱地址';
+  return;
+ }
+ if(!validateEmail(email)) {
+  document.getElementById('reg-email-error').textContent = '请输入有效的邮箱地址';
+  return;
+ }
+
+ // 验证密码
+ if(!password) {
+  document.getElementById('reg-password-error').textContent = '请输入密码';
+  return;
+ }
+ if(password.length < 6) {
+  document.getElementById('reg-password-error').textContent = '密码至少需要6位';
+  return;
+ }
+
+ // 验证确认密码
+ if(!confirmPassword) {
+  document.getElementById('confirm-password-error').textContent = '请再次输入密码';
+  return;
+ }
+ if(password !== confirmPassword) {
+  document.getElementById('confirm-password-error').textContent = '两次输入的密码不一致';
+  return;
+ }
+
+ // 检查邮箱是否已注册
+ const users = JSON.parse(localStorage.getItem('lobster_users') || '[]');
+ if(users.some(u => u.email === email)) {
+  document.getElementById('reg-email-error').textContent = '该邮箱已被注册';
+  return;
+ }
+
+ // 创建新用户
+ const newUser = {
+  id: 'u' + Date.now(),
+  username: username,
+  email: email,
+  avatar: '🦞',
+  bio: '',
+  createdAt: new Date().toISOString(),
+  installedSkills: [],
+  skillsUsed: 0
+ };
+
+ // 保存用户
+ users.push(newUser);
+ localStorage.setItem('lobster_users', JSON.stringify(users));
+
+ // 自动登录
+ currentUser = newUser;
+ sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
+
+ updateLoginButton();
+ closeAuthModal();
+ showToast('注册成功！欢迎加入 AI龙虾社区', 'success');
+}
+
+// 打开个人资料模态框
+function openProfileModal() {
+ if(!currentUser) {
+  showToast('请先登录', 'warning');
+  return;
+ }
+
+ // 填充用户数据
+ document.getElementById('profile-avatar-display').textContent = currentUser.avatar;
+ document.getElementById('profile-username').value = currentUser.username;
+ document.getElementById('profile-email').value = currentUser.email;
+ document.getElementById('profile-bio').value = currentUser.bio || '';
+
+ // 计算统计数据
+ const installedSkills = JSON.parse(localStorage.getItem('installed_skills') || '[]');
+ document.getElementById('stat-installed-skills').textContent = installedSkills.length;
+ document.getElementById('stat-skills-used').textContent = currentUser.skillsUsed || 0;
+ 
+ // 计算加入天数
+ const joinDate = new Date(currentUser.createdAt);
+ const daysSinceJoin = Math.floor((new Date() - joinDate) / (1000 * 60 * 60 * 24));
+ document.getElementById('stat-join-days').textContent = daysSinceJoin;
+
+ // 打开模态框
+ document.getElementById('profile-modal').style.display = 'block';
+}
+
+// 关闭个人资料模态框
+function closeProfileModal() {
+ document.getElementById('profile-modal').style.display = 'none';
+}
+
+// 更换头像
+function changeAvatar() {
+ const avatars = ['🦞', '🐱', '🐶', '🐰', '🦊', '🐼', '🐨', '🦁', '🐯', '🦄', '🐲', '🦔', '🐸', '🦖', '🐙', '🦋', '🐳', '🦈', '🐬', '🦚'];
+ const currentIndex = avatars.indexOf(currentUser.avatar);
+ const nextIndex = (currentIndex + 1) % avatars.length;
+ currentUser.avatar = avatars[nextIndex];
+ document.getElementById('profile-avatar-display').textContent = currentUser.avatar;
+ updateLoginButton();
+}
+
+// 保存个人资料
+function saveProfile() {
+ if(!currentUser) return;
+
+ // 更新用户数据
+ currentUser.username = document.getElementById('profile-username').value.trim();
+ currentUser.bio = document.getElementById('profile-bio').value.trim();
+
+ // 保存到 localStorage
+ const users = JSON.parse(localStorage.getItem('lobster_users') || '[]');
+ const userIndex = users.findIndex(u => u.id === currentUser.id);
+
+ if(userIndex > -1) {
+  users[userIndex] = currentUser;
+  localStorage.setItem('lobster_users', JSON.stringify(users));
+ }
+
+ // 更新 sessionStorage
+ sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
+
+ updateLoginButton();
+ closeProfileModal();
+ showToast('个人资料已保存', 'success');
 }
 
 // ========== 搜索功能 ==========
