@@ -685,6 +685,136 @@ nav {
  color: var(--text-muted);
 }
 
+/* ========== 社交功能样式 ========== */
+.forum-header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ margin-bottom: 24px;
+}
+
+.forum-action-btn {
+ display: inline-flex;
+ align-items: center;
+ gap: 4px;
+ padding: 8px 16px;
+ border: 1px solid var(--border-color);
+ background: var(--bg-secondary);
+ border-radius: var(--radius-md);
+ cursor: pointer;
+ transition: all var(--transition-fast);
+ font-size: 14px;
+ color: var(--text-secondary);
+}
+
+.forum-action-btn:hover {
+ background: var(--primary-light);
+ color: var(--primary-start);
+ border-color: var(--primary-start);
+}
+
+.forum-action-btn.liked {
+ background: var(--error-light);
+ color: var(--error);
+ border-color: var(--error);
+}
+
+.forum-action-btn.liked:hover {
+ background: var(--error);
+ color: white;
+}
+
+/* 帖子详情 */
+.post-detail-content {
+ max-width: 800px;
+}
+
+.post-detail-body {
+ max-height: 60vh;
+ overflow-y: auto;
+}
+
+.post-detail-title {
+ font-size: 24px;
+ font-weight: 700;
+ margin: 16px 0;
+ color: var(--text-primary);
+}
+
+.post-detail-content {
+ font-size: 16px;
+ color: var(--text-secondary);
+ line-height: 1.8;
+ margin-bottom: 24px;
+}
+
+.post-detail-actions {
+ display: flex;
+ gap: 12px;
+ padding: 16px 0;
+ border-top: 1px solid var(--border-color);
+ border-bottom: 1px solid var(--border-color);
+}
+
+/* 评论区域 */
+.comments-section {
+ margin-top: 24px;
+}
+
+.comments-section h3 {
+ font-size: 18px;
+ margin-bottom: 16px;
+ color: var(--text-primary);
+}
+
+.comments-list {
+ margin-bottom: 20px;
+}
+
+.comment {
+ background: var(--bg-secondary);
+ padding: 16px;
+ border-radius: var(--radius-md);
+ margin-bottom: 12px;
+}
+
+.comment-header {
+ display: flex;
+ align-items: center;
+ gap: 8px;
+ margin-bottom: 8px;
+}
+
+.comment-avatar {
+ width: 32px;
+ height: 32px;
+ border-radius: 50%;
+ background: var(--primary-gradient);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 16px;
+}
+
+.comment-author {
+ font-weight: 600;
+ color: var(--text-primary);
+}
+
+.comment-time {
+ font-size: 12px;
+ color: var(--text-muted);
+}
+
+.comment-content {
+ color: var(--text-secondary);
+ line-height: 1.6;
+}
+
+.comment-form {
+ margin-top: 16px;
+}
+
 /* ========== 学院课程样式 ========== */
 
 .course-card {
@@ -2010,9 +2140,12 @@ nav {
 <!-- 论坛页面 -->
 <div id="forum-section" class="content-section">
  <div class="main-content">
- <h1 class="section-title">💬 论坛</h1>
+ <div class="forum-header">
+  <h1 class="section-title">💬 论坛</h1>
+  <button class="btn-primary" onclick="createNewPost()">✍️ 发新帖</button>
+ </div>
  <div id="forum-content">
- <!-- 动态加载 -->
+  <!-- 动态加载 -->
  </div>
  </div>
 </div>
@@ -2714,32 +2847,80 @@ const mockData = {
  {
  id: 1,
  title: '如何用 ChatGPT 写代码',
- content: '分享了 5 个实用技巧，帮助你更好地使用 ChatGPT 进行编程...',
+ content: '分享了 5 个实用技巧，帮助你更好地使用 ChatGPT 进行编程...\n\n1. 使用清晰的提示词\n2. 提供上下文信息\n3. 分步骤引导\n4. 验证和迭代\n5. 使用代码示例',
  author: '龙虾船长',
  avatar: '🦞',
  time: '2小时前',
  likes: 234,
- replies: 45
+ replies: 45,
+ comments: [
+  {
+   id: 'c1',
+   author: '技术小白',
+   avatar: '🐱',
+   content: '非常有用的技巧，特别是第二条！',
+   time: '1小时前'
+  },
+  {
+   id: 'c2',
+   author: '学习达人',
+   avatar: '📚',
+   content: '学到了，感谢分享！',
+   time: '30分钟前'
+  }
+ ]
  },
  {
  id: 2,
  title: '推荐几个好用的 AI 工具',
- content: '整理了我最近使用的几个 AI 工具，每个都很有用...',
+ content: '整理了我最近使用的几个 AI 工具，每个都很有用...\n\n1. agent-browser - 浏览器自动化\n2. summarize - 智能总结\n3. tavily - 网络搜索',
  author: '技术小白',
  avatar: '🐱',
  time: '5小时前',
  likes: 189,
- replies: 32
+ replies: 32,
+ comments: [
+  {
+   id: 'c3',
+   author: '龙虾船长',
+   avatar: '🦞',
+   content: '这些工具都很棒，尤其是 agent-browser',
+   time: '4小时前'
+  }
+ ]
  },
  {
  id: 3,
  title: '新手如何快速入门 AI',
- content: '从零开始学习 AI 的完整路线图，包括资源推荐和学习建议...',
+ content: '从零开始学习 AI 的完整路线图，包括资源推荐和学习建议...\n\n推荐资源：\n1. OpenAI 官方文档\n2. Anthropic Claude 文档\n3. Google AI Studio',
  author: '学习达人',
  avatar: '📚',
  time: '1天前',
  likes: 567,
- replies: 89
+ replies: 89,
+ comments: [
+  {
+   id: 'c4',
+   author: '技术小白',
+   avatar: '🐱',
+   content: '非常详细的指南，感谢分享！',
+   time: '20小时前'
+  },
+  {
+   id: 'c5',
+   author: '龙虾船长',
+   avatar: '🦞',
+   content: '收藏了，准备按照这个路线学习',
+   time: '18小时前'
+  },
+  {
+   id: 'c6',
+   author: 'AI爱好者',
+   avatar: '🤖',
+   content: '有没有推荐的实战项目？',
+   time: '15小时前'
+  }
+ ]
  }
  ],
  courses: [
@@ -3347,10 +3528,15 @@ function loadSkills() {
 function loadForumPosts() {
  const content = document.getElementById('forum-content');
  const count = document.getElementById('posts-count');
- 
+
  if(content) {
- content.innerHTML = mockData.posts.map(post => `
- <div class="forum-post">
+ content.innerHTML = mockData.posts.map(post => {
+   // 检查当前用户是否已点赞
+   const likedPosts = JSON.parse(localStorage.getItem('liked_posts') || '[]');
+   const isLiked = likedPosts.includes(post.id);
+
+   return `
+ <div class="forum-post" onclick="showPostDetail(${post.id})">
  <div class="forum-post-header">
  <div class="forum-avatar">${post.avatar}</div>
  <div class="forum-author">
@@ -3361,16 +3547,297 @@ function loadForumPosts() {
  <div class="forum-post-title">${post.title}</div>
  <div class="forum-post-content">${post.content.substring(0, 100)}...</div>
  <div class="forum-post-footer">
- <span>👍 ${post.likes}</span>
- <span>💬 ${post.replies}</span>
+ <button class="forum-action-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${post.id})">
+ ${isLiked ? '❤️' : '👍'} <span id="likes-${post.id}">${post.likes}</span>
+ </button>
+ <button class="forum-action-btn" onclick="event.stopPropagation(); showPostDetail(${post.id})">
+ 💬 <span id="replies-${post.id}">${post.replies}</span>
+ </button>
  </div>
  </div>
- `).join('');
+ `;
+ }).join('');
  }
- 
+
  if(count) {
- count.textContent = mockData.posts.length + ' 条帖子';
+  count.textContent = mockData.posts.length + ' 条帖子';
  }
+}
+
+// 点赞/取消点赞
+function toggleLike(postId) {
+ if(!currentUser) {
+  showToast('请先登录', 'warning');
+  return;
+ }
+
+ const likedPosts = JSON.parse(localStorage.getItem('liked_posts') || '[]');
+ const post = mockData.posts.find(p => p.id === postId);
+
+ if(!post) return;
+
+ const index = likedPosts.indexOf(postId);
+ if(index > -1) {
+  // 取消点赞
+  likedPosts.splice(index, 1);
+  post.likes--;
+ } else {
+  // 点赞
+  likedPosts.push(postId);
+  post.likes++;
+ }
+
+ localStorage.setItem('liked_posts', JSON.stringify(likedPosts));
+
+ // 更新 UI
+ const likesSpan = document.getElementById(`likes-${postId}`);
+ if(likesSpan) {
+  likesSpan.textContent = post.likes;
+  const btn = likesSpan.parentElement;
+  if(index > -1) {
+   btn.classList.remove('liked');
+   btn.innerHTML = `👍 <span id="likes-${postId}">${post.likes}</span>`;
+  } else {
+   btn.classList.add('liked');
+   btn.innerHTML = `❤️ <span id="likes-${postId}">${post.likes}</span>`;
+  }
+ }
+
+ // 更新当前用户的统计数据
+ currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
+ saveCurrentUser();
+ showToast(index > -1 ? '已取消点赞' : '点赞成功！', 'success');
+}
+
+// 保存当前用户
+function saveCurrentUser() {
+ if(!currentUser) return;
+ sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
+
+ const users = JSON.parse(localStorage.getItem('lobster_users') || '[]');
+ const userIndex = users.findIndex(u => u.id === currentUser.id);
+ if(userIndex > -1) {
+  users[userIndex] = currentUser;
+  localStorage.setItem('lobster_users', JSON.stringify(users));
+ }
+}
+
+// 显示帖子详情
+function showPostDetail(postId) {
+ const post = mockData.posts.find(p => p.id === postId);
+ if(!post) return;
+
+ // 检查当前用户是否已点赞
+ const likedPosts = JSON.parse(localStorage.getItem('liked_posts') || '[]');
+ const isLiked = likedPosts.includes(postId);
+
+ // 生成评论列表
+ const commentsHtml = (post.comments || []).map(comment => `
+  <div class="comment">
+   <div class="comment-header">
+    <span class="comment-avatar">${comment.avatar}</span>
+    <span class="comment-author">${comment.author}</span>
+    <span class="comment-time">${comment.time}</span>
+   </div>
+   <div class="comment-content">${comment.content}</div>
+  </div>
+ `).join('');
+
+ const modalHtml = `
+ <div class="modal" id="post-detail-modal" onclick="if(event.target===this) closePostDetail()">
+  <div class="modal-content post-detail-content">
+   <button class="modal-close" onclick="closePostDetail()">✕</button>
+   <div class="post-detail-body">
+    <div class="forum-post-header">
+     <div class="forum-avatar">${post.avatar}</div>
+     <div class="forum-author">
+      <div class="forum-author-name">${post.author}</div>
+      <div class="forum-post-time">${post.time}</div>
+     </div>
+    </div>
+    <h2 class="post-detail-title">${post.title}</h2>
+    <div class="post-detail-content">${post.content}</div>
+    
+    <div class="post-detail-actions">
+     <button class="forum-action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+      ${isLiked ? '❤️' : '👍'} <span id="detail-likes-${post.id}">${post.likes}</span>
+     </button>
+     <button class="forum-action-btn">
+      💬 <span>${post.replies}</span>
+     </button>
+    </div>
+    
+    <div class="comments-section">
+     <h3>评论 (${post.comments?.length || 0})</h3>
+     <div class="comments-list">
+      ${commentsHtml || '<p class="text-muted">暂无评论</p>'}
+     </div>
+     
+     <div class="comment-form">
+      <textarea id="comment-input" class="form-input" rows="3" placeholder="写下你的评论..."></textarea>
+      <button class="btn-primary" onclick="addComment(${post.id})" style="margin-top:12px;">发表评论</button>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+ `;
+
+ // 移除旧的模态框
+ const oldModal = document.getElementById('post-detail-modal');
+ if(oldModal) {
+  oldModal.remove();
+ }
+
+ // 添加新的模态框
+ document.body.insertAdjacentHTML('beforeend', modalHtml);
+ document.getElementById('post-detail-modal').style.display = 'block';
+}
+
+// 关闭帖子详情
+function closePostDetail() {
+ const modal = document.getElementById('post-detail-modal');
+ if(modal) {
+  modal.remove();
+ }
+}
+
+// 添加评论
+function addComment(postId) {
+ if(!currentUser) {
+  showToast('请先登录', 'warning');
+  return;
+ }
+
+ const commentInput = document.getElementById('comment-input');
+ const content = commentInput.value.trim();
+
+ if(!content) {
+  showToast('请输入评论内容', 'warning');
+  return;
+ }
+
+ const post = mockData.posts.find(p => p.id === postId);
+ if(!post) return;
+
+ // 创建新评论
+ const newComment = {
+  id: 'c' + Date.now(),
+  author: currentUser.username,
+  avatar: currentUser.avatar,
+  content: content,
+  time: '刚刚'
+ };
+
+ // 添加到帖子评论
+ if(!post.comments) {
+  post.comments = [];
+ }
+ post.comments.push(newComment);
+ post.replies++;
+
+ // 保存到 localStorage
+ const postsData = JSON.stringify(mockData.posts);
+ localStorage.setItem('forum_posts', postsData);
+
+ // 更新 UI
+ showToast('评论发表成功！', 'success');
+ closePostDetail();
+ loadForumPosts(); // 刷新帖子列表
+
+ // 更新用户统计
+ currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
+ saveCurrentUser();
+}
+
+// 发新帖子
+function createNewPost() {
+ if(!currentUser) {
+  showToast('请先登录', 'warning');
+  return;
+ }
+
+ const modalHtml = `
+ <div class="modal" id="create-post-modal" onclick="if(event.target===this) closeCreatePost()">
+  <div class="modal-content">
+   <button class="modal-close" onclick="closeCreatePost()">✕</button>
+   <h2 class="modal-title">✍️ 发表新帖</h2>
+   <div style="margin-top: 24px">
+    <div class="form-group">
+     <label class="form-label">标题</label>
+     <input type="text" id="post-title" class="form-input" placeholder="请输入帖子标题">
+    </div>
+    <div class="form-group">
+     <label class="form-label">内容</label>
+     <textarea id="post-content" class="form-input" rows="6" placeholder="请输入帖子内容..."></textarea>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:16px" onclick="submitPost()">发表</button>
+   </div>
+  </div>
+ </div>
+ `;
+
+ // 移除旧的模态框
+ const oldModal = document.getElementById('create-post-modal');
+ if(oldModal) {
+  oldModal.remove();
+ }
+
+ // 添加新的模态框
+ document.body.insertAdjacentHTML('beforeend', modalHtml);
+ document.getElementById('create-post-modal').style.display = 'block';
+}
+
+// 关闭发帖模态框
+function closeCreatePost() {
+ const modal = document.getElementById('create-post-modal');
+ if(modal) {
+  modal.remove();
+ }
+}
+
+// 提交新帖
+function submitPost() {
+ const title = document.getElementById('post-title').value.trim();
+ const content = document.getElementById('post-content').value.trim();
+
+ if(!title) {
+  showToast('请输入帖子标题', 'warning');
+  return;
+ }
+
+ if(!content) {
+  showToast('请输入帖子内容', 'warning');
+  return;
+ }
+
+ // 创建新帖子
+ const newPost = {
+  id: Date.now(),
+  title: title,
+  content: content,
+  author: currentUser.username,
+  avatar: currentUser.avatar,
+  time: '刚刚',
+  likes: 0,
+  replies: 0,
+  comments: []
+ };
+
+ // 添加到帖子列表
+ mockData.posts.unshift(newPost);
+
+ // 保存到 localStorage
+ localStorage.setItem('forum_posts', JSON.stringify(mockData.posts));
+
+ // 更新 UI
+ showToast('帖子发表成功！', 'success');
+ closeCreatePost();
+ loadForumPosts();
+
+ // 更新用户统计
+ currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
+ saveCurrentUser();
 }
 
 function loadCourses() {
