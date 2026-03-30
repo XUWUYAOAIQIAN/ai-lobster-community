@@ -3698,59 +3698,6 @@ function validateEmail(email) {
  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-async function handleAuth() {
- const email = document.getElementById('auth-email').value.trim();
- const password = document.getElementById('auth-password').value;
- const emailError = document.getElementById('email-error');
- const passwordError = document.getElementById('password-error');
- 
- // 清除错误信息
- emailError.textContent = '';
- passwordError.textContent = '';
- 
- // 验证邮箱
- if(!email) {
- emailError.textContent = '请输入邮箱地址';
- return;
- }
- if(!validateEmail(email)) {
- emailError.textContent = '请输入有效的邮箱地址';
- return;
- }
- 
- // 验证密码
- if(!password) {
- passwordError.textContent = '请输入密码';
- return;
- }
- if(password.length < 6) {
- passwordError.textContent = '密码至少需要6位';
- return;
- }
- 
- try {
- // 模拟登录请求
- showToast('登录中...', 'info');
- await new Promise(resolve => setTimeout(resolve, 1000));
- 
- currentUser = {
- id: 'u' + Date.now(),
- username: email.split('@')[0],
- email: email,
- avatar: '🦞'
- };
- 
- // 使用 sessionStorage 而不是 localStorage
- sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
- 
- updateLoginButton();
- closeAuthModal();
- showToast('登录成功！', 'success');
- } catch(error) {
- showToast('登录失败：' + error.message, 'error');
- }
-}
-
 function handleLoginClick() {
  if(currentUser) {
  // 如果已登录，显示个人资料
@@ -5455,20 +5402,6 @@ function switchSkillTab(tab) {
  document.getElementById('skills-' + tab).style.display = 'block';
 }
 
-function installSkill(skillName) {
- showToast('正在安装 ' + skillName + '...', 'info');
- setTimeout(() => {
- showToast(skillName + ' 安装成功', 'success');
- }, 2000);
-}
-
-function uninstallSkill(skillName) {
- showToast('正在卸载 ' + skillName + '...', 'info');
- setTimeout(() => {
- showToast(skillName + ' 卸载成功', 'success');
- }, 2000);
-}
-
 // ========== OpenClaw 数据备份 ==========
 
 function createBackup() {
@@ -5582,17 +5515,6 @@ async function handleAuth() {
 }
 
 // 3. 修改 handleLoginClick 函数，点击登录按钮时显示个人资料而不是退出
-// 替换第 2954-2967 行
-
-function handleLoginClick() {
- if(currentUser) {
-  // 如果已登录，显示个人资料
-  openProfileModal();
- } else {
-  showAuthModal();
- }
-}
-
 // 4. 在 handleLoginClick 之后添加用户系统功能
 // 在第 2967 行之后插入
 
