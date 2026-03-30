@@ -958,6 +958,185 @@ nav {
  color: var(--text-primary);
 }
 
+/* ========== Skill 详情样式 ========== */
+.skill-detail-content {
+ max-width: 700px;
+}
+
+.skill-detail-header {
+ display: flex;
+ gap: 20px;
+ align-items: center;
+ margin-bottom: 24px;
+ padding-bottom: 20px;
+ border-bottom: 1px solid var(--border-color);
+}
+
+.skill-icon {
+ font-size: 64px;
+}
+
+.skill-detail-info {
+ flex: 1;
+}
+
+.skill-detail-title {
+ font-size: 24px;
+ font-weight: 600;
+ margin: 0 0 8px 0;
+ color: var(--text-primary);
+}
+
+.skill-detail-meta {
+ display: flex;
+ gap: 16px;
+ font-size: 14px;
+ color: var(--text-secondary);
+}
+
+.skill-detail-body {
+ margin-bottom: 24px;
+}
+
+.skill-section {
+ margin-bottom: 24px;
+}
+
+.skill-section h3 {
+ font-size: 18px;
+ margin: 0 0 12px 0;
+ color: var(--text-primary);
+}
+
+.skill-section p {
+ margin: 0 0 12px 0;
+ line-height: 1.6;
+ color: var(--text-secondary);
+}
+
+.skill-section ul {
+ margin: 0;
+ padding-left: 20px;
+ color: var(--text-secondary);
+}
+
+.skill-section li {
+ margin-bottom: 8px;
+ line-height: 1.6;
+}
+
+.config-item {
+ margin-bottom: 16px;
+}
+
+.config-item label {
+ display: block;
+ margin-bottom: 8px;
+ font-weight: 500;
+ color: var(--text-primary);
+}
+
+.form-select {
+ width: 100%;
+ padding: 8px 12px;
+ border: 1px solid var(--border-color);
+ border-radius: var(--radius-sm);
+ background: var(--bg-primary);
+ color: var(--text-primary);
+ font-size: 14px;
+}
+
+.skill-demo-result {
+ background: var(--bg-secondary);
+ padding: 20px;
+ border-radius: var(--radius-md);
+ margin-top: 16px;
+}
+
+.skill-demo-result h4 {
+ margin: 0 0 12px 0;
+ color: var(--text-primary);
+}
+
+.browser-sim {
+ background: var(--bg-primary);
+ border: 1px solid var(--border-color);
+ border-radius: var(--radius-sm);
+ overflow: hidden;
+ margin-top: 12px;
+}
+
+.browser-bar {
+ background: var(--bg-secondary);
+ padding: 8px;
+ border-bottom: 1px solid var(--border-color);
+}
+
+.browser-bar input {
+ width: calc(100% - 16px);
+ padding: 6px 8px;
+ border: none;
+ background: transparent;
+ color: var(--text-secondary);
+}
+
+.browser-content {
+ padding: 16px;
+ color: var(--text-secondary);
+}
+
+.browser-content p {
+ margin: 8px 0;
+}
+
+.search-results-demo {
+ margin-top: 12px;
+}
+
+.result-item {
+ padding: 8px 0;
+ color: var(--text-secondary);
+ border-bottom: 1px solid var(--border-color);
+}
+
+.result-item:last-child {
+ border-bottom: none;
+}
+
+.skill-detail-footer {
+ display: flex;
+ gap: 12px;
+ justify-content: flex-end;
+ padding-top: 20px;
+ border-top: 1px solid var(--border-color);
+}
+
+.installed-skill-card {
+ border: 2px solid var(--success-light);
+}
+
+.badge {
+ display: inline-block;
+ padding: 4px 8px;
+ border-radius: var(--radius-sm);
+ font-size: 12px;
+ font-weight: 500;
+}
+
+.badge-success {
+ background: var(--success-light);
+ color: var(--success);
+}
+
+.btn-danger {
+ background: var(--error);
+ color: white;
+}
+
+.btn-danger:hover {
+ background: #c53030;
+}
+
 .modal-title {
  font-size: 24px;
  font-weight: 800;
@@ -2015,6 +2194,58 @@ nav {
  </div>
 </div>
 
+<!-- Skill 详情模态框 -->
+<div class="modal" id="skill-detail-modal" onclick="if(event.target===this) closeSkillDetail()">
+ <div class="modal-content skill-detail-content">
+  <button class="modal-close" onclick="closeSkillDetail()">✕</button>
+  <div class="skill-detail-header">
+   <div class="skill-icon" id="skill-detail-icon">⚡</div>
+   <div class="skill-detail-info">
+    <h2 class="skill-detail-title" id="skill-detail-title">Skill 名称</h2>
+    <div class="skill-detail-meta">
+     <span id="skill-detail-author">作者</span>
+     <span id="skill-detail-version">v1.0.0</span>
+     <span id="skill-detail-rating">⭐ 0.0</span>
+     <span id="skill-detail-downloads">📥 0</span>
+    </div>
+   </div>
+  </div>
+
+  <div class="skill-detail-body">
+   <div class="skill-section">
+    <h3>📖 描述</h3>
+    <p id="skill-detail-desc">Skill 描述</p>
+   </div>
+
+   <div class="skill-section">
+    <h3>🎯 使用场景</h3>
+    <ul id="skill-detail-usecases">
+     <!-- 动态加载 -->
+    </ul>
+   </div>
+
+   <div class="skill-section">
+    <h3>⚙️ 配置</h3>
+    <div id="skill-detail-config">
+     <!-- 动态加载 -->
+    </div>
+   </div>
+
+   <div class="skill-section">
+    <h3>🚀 试用</h3>
+    <div id="skill-demo-result" class="skill-demo-result" style="display:none;">
+     <!-- 演示结果 -->
+    </div>
+   </div>
+  </div>
+
+  <div class="skill-detail-footer">
+   <button class="btn-secondary" onclick="closeSkillDetail()">关闭</button>
+   <button class="btn-primary" id="skill-install-btn" onclick="installSkill(currentSkill?.id)">安装 Skill</button>
+  </div>
+ </div>
+</div>
+
 <!-- Toast 容器 -->
 <div class="toast-container" id="toast-container"></div>
 
@@ -2026,7 +2257,196 @@ let currentTheme = localStorage.getItem('theme') || 'light';
 let currentUser = JSON.parse(sessionStorage.getItem('lobster_user') || 'null');
 let isMobileMenuOpen = false;
 
-// 模拟数据
+// ========== 真实 Skills 数据 ==========
+// 从 /workspace/projects/workspace/skills/ 目录扫描得到
+
+const realSkills = [
+  {
+    id: 'agent-browser',
+    title: '浏览器自动化',
+    icon: '🌐',
+    desc: '自动打开网站、点击按钮、填写表单、截图、提取数据。支持网页自动化、测试、爬虫等任务',
+    tags: ['自动化', '测试', '爬虫'],
+    category: '自动化',
+    author: 'OpenClaw',
+    version: '1.0.0',
+    downloads: 12567,
+    rating: 4.9,
+    homepage: 'https://docs.openclaw.ai',
+    usecases: [
+      '自动化网站测试',
+      '批量填写表单',
+      '网站数据抓取',
+      '网页截图',
+      '自动化登录'
+    ],
+    config: [
+      { name: '默认浏览器', type: 'select', options: ['Chrome', 'Firefox', 'Safari'], default: 'Chrome' },
+      { name: '截图格式', type: 'select', options: ['PNG', 'JPEG'], default: 'PNG' },
+      { name: '超时时间', type: 'number', default: 30, min: 10, max: 300 }
+    ]
+  },
+  {
+    id: 'summarize',
+    title: '智能总结',
+    icon: '📝',
+    desc: '总结文档、网页、PDF、图片、视频内容。支持多种格式和AI模型',
+    tags: ['AI', '总结', '文档'],
+    category: 'AI',
+    author: 'OpenClaw',
+    version: '1.0.0',
+    downloads: 8934,
+    rating: 4.8,
+    homepage: 'https://summarize.sh',
+    usecases: [
+      '快速阅读长文档',
+      '总结网页内容',
+      '视频字幕总结',
+      '会议记录整理',
+      '论文摘要'
+    ],
+    config: [
+      { name: 'AI模型', type: 'select', options: ['OpenAI GPT-4', 'Anthropic Claude', 'Google Gemini'], default: 'Google Gemini' },
+      { name: '总结长度', type: 'select', options: ['简短', '中等', '详细'], default: '中等' }
+    ]
+  },
+  {
+    id: 'tavily',
+    title: '网络搜索',
+    icon: '🔍',
+    desc: '搜索网络获取最新信息、研究主题、查找资料。支持摘要和详细内容',
+    tags: ['搜索', '研究', '信息'],
+    category: 'AI',
+    author: 'OpenClaw',
+    version: '1.0.0',
+    downloads: 15678,
+    rating: 4.9,
+    homepage: 'https://tavily.com',
+    usecases: [
+      '搜索最新资讯',
+      '研究技术主题',
+      '查找参考资料',
+      '获取实时信息',
+      '竞品分析'
+    ],
+    config: [
+      { name: '搜索深度', type: 'select', options: ['快速', '标准', '深度'], default: '标准' },
+      { name: '结果数量', type: 'number', default: 10, min: 5, max: 20 }
+    ]
+  },
+  {
+    id: 'self-improving-agent',
+    title: '自我学习',
+    icon: '🧠',
+    desc: '自动学习和改进，记录错误和教训，持续优化自身能力',
+    tags: ['AI', '学习', '优化'],
+    category: 'AI',
+    author: 'OpenClaw',
+    version: '1.0.0',
+    downloads: 5678,
+    rating: 4.7,
+    homepage: 'https://docs.openclaw.ai',
+    usecases: [
+      '记录错误和教训',
+      '自动优化工作流程',
+      '学习新的技能',
+      '避免重复错误',
+      '持续改进'
+    ],
+    config: [
+      { name: '学习频率', type: 'select', options: ['实时', '每日', '每周'], default: '每日' },
+      { name: '学习深度', type: 'select', options: ['基础', '标准', '深入'], default: '标准' }
+    ]
+  },
+  {
+    id: 'find-skills',
+    title: '技能查找',
+    icon: '🔎',
+    desc: '搜索和发现新的技能、插件、工具，扩展OpenClaw能力',
+    tags: ['工具', '发现', '插件'],
+    category: '工具',
+    author: 'OpenClaw',
+    version: '1.0.0',
+    downloads: 4234,
+    rating: 4.6,
+    homepage: 'https://clawhub.com',
+    usecases: [
+      '搜索新技能',
+      '发现插件',
+      '扩展功能',
+      '技能对比',
+      '社区推荐'
+    ],
+    config: [
+      { name: '搜索范围', type: 'select', options: ['官方', '社区', '全部'], default: '全部' }
+    ]
+  },
+  {
+    id: 'gog',
+    title: '游戏助手',
+    icon: '🎮',
+    desc: '游戏辅助工具，提供攻略、技巧、攻略查询等功能',
+    tags: ['游戏', '娱乐', '辅助'],
+    category: '娱乐',
+    author: 'OpenClaw',
+    version: '1.0.0',
+    downloads: 2345,
+    rating: 4.5,
+    usecases: [
+      '游戏攻略查询',
+      '技巧分享',
+      '游戏数据分析',
+      '成就追踪'
+    ],
+    config: [
+      { name: '游戏类型', type: 'select', options: ['RPG', 'FPS', 'MOBA', '策略'], default: '全部' }
+    ]
+  },
+  {
+    id: 'new-media-marketing',
+    title: '新媒体营销',
+    icon: '📱',
+    desc: '社交媒体营销工具，提供内容策划、发布管理、数据分析等功能',
+    tags: ['营销', '社交媒体', '内容'],
+    category: '营销',
+    author: 'OpenClaw',
+    version: '1.0.0',
+    downloads: 3456,
+    rating: 4.7,
+    usecases: [
+      '内容策划',
+      '社交媒体管理',
+      '数据分析',
+      '营销活动'
+    ],
+    config: [
+      { name: '平台', type: 'select', options: ['微信', '微博', '抖音', '小红书'], default: '全部' }
+    ]
+  },
+  {
+    id: 'skillhub-preference',
+    title: '技能偏好',
+    icon: '⚙️',
+    desc: '技能管理偏好设置，自定义技能搜索、安装、更新的行为',
+    tags: ['工具', '设置', '管理'],
+    category: '工具',
+    author: 'OpenClaw',
+    version: '1.0.0',
+    downloads: 1234,
+    rating: 4.4,
+    usecases: [
+      '自定义技能搜索',
+      '技能自动更新',
+      '技能分类管理',
+      '个性化推荐'
+    ],
+    config: [
+      { name: '更新频率', type: 'select', options: ['从不', '每日', '每周', '每月'], default: '每周' }
+    ]
+  }
+];
+
+// ========== 模拟数据 ==========
 const mockData = {
  skills: [
  {
@@ -2483,30 +2903,45 @@ function loadSkills() {
  const grid = document.getElementById('skills-grid');
  const empty = document.getElementById('skills-empty');
  const count = document.getElementById('skills-count');
- 
- if(grid && mockData.skills.length > 0) {
- grid.innerHTML = mockData.skills.map(skill => `
+
+ // 使用真实的 Skills 数据
+ const skillsToShow = realSkills;
+
+ if(grid && skillsToShow.length > 0) {
+ grid.innerHTML = skillsToShow.map(skill => {
+   // 检查是否已安装
+   const installedSkills = JSON.parse(localStorage.getItem('installed_skills') || '[]');
+   const isInstalled = installedSkills.includes(skill.id);
+
+   return `
  <div class="card">
  <div class="card-header">
  <div class="card-icon">${skill.icon}</div>
  <div class="card-title">${skill.title}</div>
+ ${isInstalled ? '<span class="badge badge-success">已安装</span>' : ''}
  </div>
  <div class="card-body">
  <div class="card-desc">${skill.desc}</div>
  <div class="card-tags">
  ${skill.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
  </div>
+ <div class="card-meta">
+ <span>⭐ ${skill.rating}</span>
+ <span>📥 ${skill.downloads.toLocaleString()}</span>
+ </div>
  </div>
  <div class="card-footer">
  <span>👥 ${skill.author}</span>
- <button class="card-action" onclick="showToast('功能开发中...')">查看</button>
+ <button class="card-action" onclick="showSkillDetail('${skill.id}')">查看</button>
+ ${isInstalled ? '' : `<button class="card-action btn-primary" onclick="installSkill('${skill.id}')">安装</button>`}
  </div>
  </div>
- `).join('');
- 
+ `;
+ }).join('');
+
  if(empty) empty.style.display = 'none';
  }
- 
+
  if(count) {
  count.textContent = mockData.skills.length + ' 个工作流';
  }
@@ -2650,6 +3085,241 @@ document.addEventListener('DOMContentLoaded', () => {
  observer.observe(profileSection, { attributes: true });
  }
 });
+
+// ========== Skill 管理 ==========
+
+let currentSkill = null;
+
+// 显示 Skill 详情
+function showSkillDetail(skillId) {
+  const skill = realSkills.find(s => s.id === skillId);
+  if(!skill) {
+    showToast('Skill 不存在', 'error');
+    return;
+  }
+
+  currentSkill = skill;
+
+  // 更新详情内容
+  document.getElementById('skill-detail-icon').textContent = skill.icon;
+  document.getElementById('skill-detail-title').textContent = skill.title;
+  document.getElementById('skill-detail-desc').textContent = skill.desc;
+  document.getElementById('skill-detail-author').textContent = skill.author;
+  document.getElementById('skill-detail-version').textContent = 'v' + skill.version;
+  document.getElementById('skill-detail-rating').textContent = '⭐ ' + skill.rating;
+  document.getElementById('skill-detail-downloads').textContent = '📥 ' + skill.downloads.toLocaleString();
+
+  // 使用场景
+  const usecasesHtml = skill.usecases.map(uc => `<li>✅ ${uc}</li>`).join('');
+  document.getElementById('skill-detail-usecases').innerHTML = usecasesHtml;
+
+  // 配置项
+  const configHtml = skill.config.map(cfg => {
+    if(cfg.type === 'select') {
+      return `
+        <div class="config-item">
+          <label>${cfg.name}</label>
+          <select id="config-${cfg.name}" class="form-select">
+            ${cfg.options.map(opt => `<option value="${opt}" ${opt === cfg.default ? 'selected' : ''}>${opt}</option>`).join('')}
+          </select>
+        </div>
+      `;
+    } else if(cfg.type === 'number') {
+      return `
+        <div class="config-item">
+          <label>${cfg.name}</label>
+          <input type="number" id="config-${cfg.name}" class="form-input"
+                 value="${cfg.default}" min="${cfg.min || 0}" max="${cfg.max || 999}">
+        </div>
+      `;
+    }
+    return '';
+  }).join('');
+
+  document.getElementById('skill-detail-config').innerHTML = configHtml || '<p class="text-muted">无需配置</p>';
+
+  // 检查是否已安装
+  const installedSkills = JSON.parse(localStorage.getItem('installed_skills') || '[]');
+  const isInstalled = installedSkills.includes(skill.id);
+
+  const installBtn = document.getElementById('skill-install-btn');
+  if(installBtn) {
+    if(isInstalled) {
+      installBtn.textContent = '已安装';
+      installBtn.disabled = true;
+      installBtn.classList.remove('btn-primary');
+      installBtn.classList.add('btn-success');
+    } else {
+      installBtn.textContent = '安装 Skill';
+      installBtn.disabled = false;
+      installBtn.classList.remove('btn-success');
+      installBtn.classList.add('btn-primary');
+    }
+  }
+
+  // 打开模态框
+  document.getElementById('skill-detail-modal').style.display = 'block';
+}
+
+// 关闭 Skill 详情
+function closeSkillDetail() {
+  document.getElementById('skill-detail-modal').style.display = 'none';
+  currentSkill = null;
+}
+
+// 安装 Skill
+function installSkill(skillId) {
+  const skill = realSkills.find(s => s.id === skillId);
+  if(!skill) {
+    showToast('Skill 不存在', 'error');
+    return;
+  }
+
+  showToast('正在安装 ' + skill.title + '...', 'info');
+
+  // 模拟安装过程
+  setTimeout(() => {
+    const installedSkills = JSON.parse(localStorage.getItem('installed_skills') || '[]');
+    if(!installedSkills.includes(skillId)) {
+      installedSkills.push(skillId);
+      localStorage.setItem('installed_skills', JSON.stringify(installedSkills));
+    }
+
+    showToast(skill.title + ' 安装成功！', 'success');
+    closeSkillDetail();
+    loadSkills(); // 刷新 Skills 列表
+    loadInstalledSkills(); // 刷新已安装列表
+  }, 1500);
+}
+
+// 卸载 Skill
+function uninstallSkill(skillId) {
+  if(!confirm('确定要卸载这个 Skill 吗？')) return;
+
+  const skill = realSkills.find(s => s.id === skillId);
+  if(!skill) {
+    showToast('Skill 不存在', 'error');
+    return;
+  }
+
+  const installedSkills = JSON.parse(localStorage.getItem('installed_skills') || '[]');
+  const index = installedSkills.indexOf(skillId);
+
+  if(index > -1) {
+    installedSkills.splice(index, 1);
+    localStorage.setItem('installed_skills', JSON.stringify(installedSkills));
+    showToast(skill.title + ' 已卸载', 'success');
+    loadInstalledSkills();
+  }
+}
+
+// 加载已安装的 Skills
+function loadInstalledSkills() {
+  const installedIds = JSON.parse(localStorage.getItem('installed_skills') || '[]');
+  const container = document.getElementById('installed-skills-list');
+
+  if(!container) return;
+
+  if(installedIds.length === 0) {
+    container.innerHTML = '<div class="empty-state">还没有安装任何 Skill</div>';
+    return;
+  }
+
+  const installedSkills = realSkills.filter(s => installedIds.includes(s.id));
+
+  container.innerHTML = installedSkills.map(skill => `
+    <div class="card installed-skill-card">
+      <div class="card-header">
+        <div class="card-icon">${skill.icon}</div>
+        <div class="card-title">${skill.title}</div>
+        <span class="badge badge-success">已安装</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">${skill.desc}</div>
+      </div>
+      <div class="card-footer">
+        <button class="card-action" onclick="useSkill('${skill.id}')">使用</button>
+        <button class="card-action btn-danger" onclick="uninstallSkill('${skill.id}')">卸载</button>
+      </div>
+    </div>
+  `).join('');
+
+  // 更新统计
+  const count = document.getElementById('installed-count');
+  if(count) {
+    count.textContent = installedIds.length;
+  }
+}
+
+// 使用 Skill（演示功能）
+function useSkill(skillId) {
+  const skill = realSkills.find(s => s.id === skillId);
+  if(!skill) return;
+
+  showToast('正在启动 ' + skill.title + '...', 'info');
+
+  // 简单演示 - 实际使用需要后端支持
+  setTimeout(() => {
+    let demoHtml = '';
+
+    if(skill.id === 'agent-browser') {
+      demoHtml = `
+        <div class="skill-demo-result">
+          <h4>🌐 浏览器自动化演示</h4>
+          <p>已打开浏览器，准备执行自动化任务...</p>
+          <div class="browser-sim">
+            <div class="browser-bar">
+              <input type="text" value="https://example.com" readonly>
+            </div>
+            <div class="browser-content">
+              <p>📸 已截取页面截图</p>
+              <p>🔍 已提取页面数据</p>
+              <p>✅ 自动化任务完成</p>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if(skill.id === 'summarize') {
+      demoHtml = `
+        <div class="skill-demo-result">
+          <h4>📝 智能总结演示</h4>
+          <p>请输入要总结的内容：</p>
+          <textarea class="form-input" rows="3" placeholder="粘贴要总结的文本..."></textarea>
+          <button class="btn-primary" onclick="showToast('总结功能需要后端支持', 'warning')">开始总结</button>
+        </div>
+      `;
+    } else if(skill.id === 'tavily') {
+      demoHtml = `
+        <div class="skill-demo-result">
+          <h4>🔍 网络搜索演示</h4>
+          <p>搜索结果：</p>
+          <div class="search-results-demo">
+            <div class="result-item">🔹 AI技术发展趋势（2026）</div>
+            <div class="result-item">🔹 最新AI工具推荐</div>
+            <div class="result-item">🔹 OpenClaw 1.2.3 版本发布</div>
+          </div>
+        </div>
+      `;
+    } else {
+      demoHtml = `
+        <div class="skill-demo-result">
+          <h4>${skill.icon} ${skill.title} 演示</h4>
+          <p>${skill.desc}</p>
+          <p>🚀 Skill 已启动，等待指令...</p>
+        </div>
+      `;
+    }
+
+    // 显示演示结果
+    const demoContainer = document.getElementById('skill-demo-result');
+    if(demoContainer) {
+      demoContainer.innerHTML = demoHtml;
+      demoContainer.style.display = 'block';
+    }
+
+    showToast(skill.title + ' 已启动！', 'success');
+  }, 1000);
+}
 
 // ========== Toast 提示 ==========
 
