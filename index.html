@@ -1354,6 +1354,234 @@ nav {
  box-shadow: var(--shadow-xl);
  animation: slideUp 0.3s ease-out;
  position: relative;
+ display: flex;
+ flex-direction: column;
+}
+
+/* ========== Skill 详情样式优化（覆盖） ========== */
+.modal-content.skill-detail-content {
+ max-width: 900px !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+}
+
+.skill-detail-header {
+ display: flex;
+ gap: 24px;
+ align-items: flex-start;
+ margin-bottom: 24px;
+ padding: 24px;
+ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+ border-radius: var(--radius-lg);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.skill-icon {
+ font-size: 80px;
+  width: 120px;
+ height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.skill-detail-info {
+  flex: 1;
+}
+
+.skill-detail-title {
+ font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: white;
+  line-height: 1.3;
+}
+
+.skill-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.skill-detail-body {
+  margin-bottom: 24px;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.skill-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.skill-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.skill-section h3::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--primary-gradient);
+  border-radius: 2px;
+}
+
+.skill-section p {
+  margin: 0 0 12px 0;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.skill-section ul {
+  margin: 0 0 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.skill-section li {
+  margin-bottom: 12px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  font-size: 15px;
+  padding-left: 24px;
+  position: relative;
+}
+
+.skill-section li::before {
+  content: '✅';
+  position: absolute;
+  left: 0;
+  color: var(--primary-start);
+}
+
+.config-item {
+  margin-bottom: 20px;
+}
+
+.config-item label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.form-select:hover {
+  border-color: var(--primary-start);
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary-start);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.skill-demo-result {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  margin-top: 16px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.skill-demo-result h4 {
+  margin: 0 0 12px 0;
+  color: white;
+  font-size: 18px;
+}
+
+.skill-detail-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 24px 0 0 0;
+  border-top: 1px solid var(--border-color);
+  margin-top: 24px;
+}
+
+.skill-detail-footer .btn-primary,
+.skill-detail-footer .btn-secondary {
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .modal-content.skill-detail-content {
+    width: 95% !important;
+  }
+  
+  .skill-detail-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .skill-icon {
+    margin-bottom: 16px;
+  }
+  
+  .skill-detail-meta {
+    justify-content: center;
+  }
+  
+  .skill-detail-footer {
+    flex-direction: column;
+  }
+  
+  .skill-detail-footer .btn-primary,
+  .skill-detail-footer .btn-secondary {
+    width: 100%;
+  }
+}
+
+/* ========== 模态框居中显示 ========== */
+.modal {
+ display: flex;
+ align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+ from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
@@ -2020,6 +2248,102 @@ nav {
 .progress-text {
  font-size: 14px;
  color: var(--text-secondary);
+/* ========== 详情页样式优化 ========== */
+
+/* Skill 详情优化 */
+.modal-content.skill-detail-content {
+  max-width: 900px !important;
+  width: 90% !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+}
+
+.skill-detail-header {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: var(--radius-lg);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.skill-icon {
+  font-size: 80px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.skill-detail-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: white;
+  line-height: 1.3;
+}
+
+.skill-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.skill-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.skill-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: var(--text-primary);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.skill-section li {
+  padding-left: 24px;
+  position: relative;
+}
+
+.skill-section li::before {
+  content: '✅';
+  position: absolute;
+  left: 0;
+  color: var(--primary-start);
+}
+
+/* 模态框居中 */
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
  text-align: center;
 }
 
