@@ -3584,6 +3584,38 @@ document.addEventListener('DOMContentLoaded', function() {
   modal.style.display = 'none';
  });
 
+ // ESC 键关闭模态框
+ document.addEventListener('keydown', function(e) {
+  if(e.key === 'Escape') {
+   // 关闭所有打开的模态框
+   document.querySelectorAll('.modal').forEach(modal => {
+    if(modal.style.display === 'flex' || modal.style.display === 'block') {
+     if(modal.id === 'post-detail-modal' || modal.id === 'course-detail-modal') {
+      modal.remove();
+     } else {
+      modal.style.display = 'none';
+     }
+    }
+   });
+  }
+ });
+
+ // 回车键提交登录/注册表单
+ document.addEventListener('keydown', function(e) {
+  if(e.key === 'Enter') {
+   const authModal = document.getElementById('auth-modal');
+   if(authModal && authModal.style.display === 'flex') {
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    if(loginForm && loginForm.style.display !== 'none') {
+     handleAuth();
+    } else if(registerForm && registerForm.style.display !== 'none') {
+     handleRegister();
+    }
+   }
+  }
+ });
+
  // 检查用户登录状态
  if(currentUser) {
  updateLoginButton();
@@ -3658,7 +3690,7 @@ function toggleMobileMenu() {
 
 function showAuthModal() {
  const modal = document.getElementById('auth-modal');
- modal.style.display = 'flex';
+ modal.style.setProperty('display', 'flex', 'important');
 }
 
 function closeAuthModal() {
@@ -3723,6 +3755,9 @@ function clearAllErrors() {
 
 // 处理注册
 function handleRegister() {
+ const submitBtn = document.querySelector('#register-form .btn-primary');
+ if(submitBtn.disabled) return; // 防止重复提交
+
  const username = document.getElementById('reg-username').value.trim();
  const email = document.getElementById('reg-email').value.trim();
  const password = document.getElementById('reg-password').value;
@@ -3778,32 +3813,44 @@ function handleRegister() {
   return;
  }
 
- // 创建新用户
- const newUser = {
-  id: 'u' + Date.now(),
-  username: username,
-  email: email,
-  avatar: '🦞',
-  bio: '',
-  createdAt: new Date().toISOString(),
-  installedSkills: [],
-  skillsUsed: 0
- };
+ // 禁用提交按钮，显示加载状态
+ submitBtn.disabled = true;
+ const originalText = submitBtn.textContent;
+ submitBtn.textContent = '注册中...';
 
- // 保存用户
- users.push(newUser);
- localStorage.setItem('lobster_users', JSON.stringify(users));
+ try {
+  // 创建新用户
+  const newUser = {
+   id: 'u' + Date.now(),
+   username: username,
+   email: email,
+   avatar: '🦞',
+   bio: '',
+   createdAt: new Date().toISOString(),
+   installedSkills: [],
+   skillsUsed: 0
+  };
 
- // 自动登录
- currentUser = newUser;
- sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
+  // 保存用户
+  users.push(newUser);
+  localStorage.setItem('lobster_users', JSON.stringify(users));
 
-	// 显示欢迎消息
-	showWelcomeMessage(currentUser.username);
-	// 显示欢迎消息
-	showWelcomeMessage(currentUser.username);
-	// 显示欢迎消息
-	showWelcomeMessage(currentUser.username);
+  // 自动登录
+  currentUser = newUser;
+  sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
+
+  // 显示欢迎消息
+  showWelcomeMessage(currentUser.username);
+  
+  // 关闭弹窗
+  closeAuthModal();
+  updateLoginButton();
+  showToast('注册成功！欢迎加入 AI龙虾社区 🎉', 'success');
+ } finally {
+  // 恢复按钮状态
+  submitBtn.disabled = false;
+  submitBtn.textContent = originalText;
+ }
 }
 
 // 打开个人资料模态框
@@ -3830,7 +3877,7 @@ function openProfileModal() {
  document.getElementById('stat-join-days').textContent = daysSinceJoin;
 
  // 打开模态框
- document.getElementById('profile-modal').style.display = 'block';
+ document.getElementById('profile-modal').style.setProperty('display', 'block', 'important');
 }
 
 // 关闭个人资料模态框
@@ -3994,11 +4041,11 @@ function loadNotifications() {
 }
 
 function showNotifications() {
- document.getElementById('notifications-modal').classList.add('active');
+ document.getElementById('notifications-modal').style.setProperty('display', 'flex', 'important');
 }
 
 function closeNotificationsModal() {
- document.getElementById('notifications-modal').classList.remove('active');
+ document.getElementById('notifications-modal').style.display = 'none';
 }
 
 function readNotification(id) {
@@ -4232,7 +4279,7 @@ function showPostDetail(postId) {
 
  // 添加新的模态框
  document.body.insertAdjacentHTML('beforeend', modalHtml);
- document.getElementById('post-detail-modal').style.display = 'block';
+ document.getElementById('post-detail-modal').style.setProperty('display', 'block', 'important');
 }
 
 // 关闭帖子详情
@@ -4527,7 +4574,7 @@ function showCourseDetail(courseId) {
 
  // 添加新的模态框
  document.body.insertAdjacentHTML('beforeend', modalHtml);
- document.getElementById('course-detail-modal').style.display = 'block';
+ document.getElementById('course-detail-modal').style.setProperty('display', 'block', 'important');
 }
 
 // 生成课程章节
@@ -4936,7 +4983,7 @@ function showSkillDetail(skillId) {
   }
 
   // 打开模态框
-  document.getElementById('skill-detail-modal').style.display = 'block';
+  document.getElementById('skill-detail-modal').style.setProperty('display', 'block', 'important');
 }
 
 // 关闭 Skill 详情
