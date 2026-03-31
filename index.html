@@ -2788,7 +2788,7 @@ nav {
  </div>
 
  <!-- 安装组件 -->
- <div class="install-step" id="install-step" style="display:none;">
+ <div class="install-step" id="install-step">
  <div class="step-header">
  <div class="step-number">2</div>
  <div class="step-title">安装组件</div>
@@ -2806,7 +2806,7 @@ nav {
  </div>
 
  <!-- 配置导入 -->
- <div class="install-step" id="config-step" style="display:none;">
+ <div class="install-step" id="config-step">
  <div class="step-header">
  <div class="step-number">3</div>
  <div class="step-title">配置导入</div>
@@ -5371,7 +5371,11 @@ function checkEnvironment() {
    document.querySelector('#openclaw-result').previousElementSibling.textContent = '⚠️';
    status.textContent = '检测完成';
    status.className = 'step-status success';
-   installBtn.style.display = 'block';
+   
+   // 显示安装步骤容器和按钮
+   document.getElementById('install-step').style.setProperty('display', 'block', 'important');
+   installBtn.style.setProperty('display', 'block', 'important');
+   
    showToast('环境检测通过，可以开始安装', 'success');
   }
  }, 1800);
