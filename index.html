@@ -5308,29 +5308,73 @@ function debounce(func, wait) {
 function checkEnvironment() {
  const nodejsResult = document.getElementById('nodejs-result');
  const openclawResult = document.getElementById('openclaw-result');
+ const gitResult = document.createElement('div');
+ gitResult.className = 'env-check-item';
+ gitResult.innerHTML = `
+  <span class="env-check-icon">⏳</span>
+  <span class="env-check-name">Git</span>
+  <span class="env-check-result" id="git-result">检测中...</span>
+ `;
+ document.getElementById('env-check-list').appendChild(gitResult);
+ 
  const status = document.getElementById('env-check-status');
+ const installBtn = document.getElementById('install-btn');
  
  nodejsResult.textContent = '检测中...';
  openclawResult.textContent = '检测中...';
  status.textContent = '检测中...';
  status.className = 'step-status';
  
- // 模拟检测
+ // 模拟Node.js检测
  setTimeout(() => {
- nodejsResult.textContent = '已安装 v18.17.0';
- nodejsResult.style.color = 'var(--success)';
- }, 500);
+  const hasNode = Math.random() > 0.1; // 90%概率已安装
+  if(hasNode) {
+   nodejsResult.textContent = '已安装 v18.17.0';
+   nodejsResult.style.color = 'var(--success)';
+   document.querySelector('#nodejs-result').previousElementSibling.textContent = '✅';
+  } else {
+   nodejsResult.textContent = '未安装，需要 v16+';
+   nodejsResult.style.color = 'var(--error)';
+   document.querySelector('#nodejs-result').previousElementSibling.textContent = '❌';
+  }
+ }, 800);
  
+ // 模拟Git检测
  setTimeout(() => {
- openclawResult.textContent = '已安装 v1.2.3';
- openclawResult.style.color = 'var(--success)';
- status.textContent = '检测完成';
- status.className = 'step-status success';
+  const hasGit = Math.random() > 0.05; // 95%概率已安装
+  const gitResultEl = document.getElementById('git-result');
+  if(hasGit) {
+   gitResultEl.textContent = '已安装 v2.40.0';
+   gitResultEl.style.color = 'var(--success)';
+   document.querySelector('#git-result').previousElementSibling.textContent = '✅';
+  } else {
+   gitResultEl.textContent = '未安装';
+   gitResultEl.style.color = 'var(--error)';
+   document.querySelector('#git-result').previousElementSibling.textContent = '❌';
+  }
+ }, 1200);
  
- // 显示安装步骤
- document.getElementById('install-step').style.display = 'block';
- showToast('环境检测完成', 'success');
- }, 1500);
+ // 模拟OpenClaw检测
+ setTimeout(() => {
+  const hasOpenClaw = localStorage.getItem('openclaw_installed') === 'true';
+  if(hasOpenClaw) {
+   openclawResult.textContent = '已安装 v1.2.3';
+   openclawResult.style.color = 'var(--success)';
+   document.querySelector('#openclaw-result').previousElementSibling.textContent = '✅';
+   status.textContent = '已安装';
+   status.className = 'step-status success';
+   showToast('OpenClaw 已安装，跳转到配置面板', 'info');
+   setTimeout(() => setPage('openclaw-dashboard'), 1500);
+  } else {
+   openclawResult.textContent = '未安装';
+   openclawResult.style.color = 'var(--warning)';
+   document.querySelector('#openclaw-result').previousElementSibling.textContent = '⚠️';
+   status.textContent = '检测完成';
+   status.className = 'step-status success';
+   installBtn.style.display = 'block';
+   showToast('环境检测通过，可以开始安装', 'success');
+  }
+ }, 1800);
 }
 
 // ========== OpenClaw 安装 ==========
@@ -5347,32 +5391,114 @@ function startInstall() {
  installStatus.textContent = '安装中...';
  installStatus.className = 'step-status';
  
+ // 安装步骤
+ const steps = [
+  '下载安装包...',
+  '安装核心组件...',
+  '配置环境变量...',
+  '初始化服务...',
+  '验证安装...'
+ ];
+ 
+ let currentStep = 0;
  let progressValue = 0;
  const interval = setInterval(() => {
- progressValue += 25;
- progressFill.style.width = progressValue + '%';
- progressText.textContent = `正在安装... ${progressValue}%`;
- 
- if(progressValue >= 100) {
- clearInterval(interval);
- installStatus.textContent = '安装完成';
- installStatus.className = 'step-status success';
- showToast('安装完成！', 'success');
- 
- // 显示配置步骤
- document.getElementById('config-step').style.display = 'block';
- }
- }, 1000);
+  progressValue += 5;
+  progressFill.style.width = progressValue + '%';
+  
+  // 更新步骤提示
+  if(progressValue > currentStep * 20 && currentStep < steps.length) {
+   progressText.textContent = steps[currentStep];
+   currentStep++;
+  }
+  
+  if(progressValue >= 100) {
+   clearInterval(interval);
+   installStatus.textContent = '安装完成';
+   installStatus.className = 'step-status success';
+   progressText.textContent = '安装完成！正在跳转...';
+   showToast('OpenClaw 安装成功！🎉', 'success');
+   
+   // 标记为已安装
+   localStorage.setItem('openclaw_installed', 'true');
+   
+   // 显示配置步骤
+   setTimeout(() => {
+    document.getElementById('config-step').style.display = 'block';
+    progress.style.display = 'none';
+   }, 1000);
+  }
+ }, 300);
 }
 
 // ========== OpenClaw 配置 ==========
 
 function importConfig() {
- showToast('导入配置功能开发中...', 'info');
+  // 创建文件选择器
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,.yaml,.yml';
+  
+  input.onchange = function(e) {
+    const file = e.target.files[0];
+    if(!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      try {
+        // 模拟解析配置
+        showToast('正在导入配置...', 'info');
+        setTimeout(() => {
+          localStorage.setItem('openclaw_config', event.target.result);
+          showToast('配置导入成功！', 'success');
+          
+          // 配置完成，跳转到面板
+          setTimeout(() => {
+            setPage('openclaw-dashboard');
+            showToast('欢迎使用 OpenClaw！', 'success');
+          }, 1000);
+        }, 1500);
+      } catch (err) {
+        showToast('配置文件格式错误', 'error');
+      }
+    };
+    reader.readAsText(file);
+  };
+  
+  input.click();
 }
 
 function createConfig() {
- showToast('创建新配置功能开发中...', 'info');
+  showToast('正在生成默认配置...', 'info');
+  
+  // 模拟生成默认配置
+  const defaultConfig = {
+    version: '1.2.3',
+    gateway: {
+      port: 9001,
+      host: '0.0.0.0',
+      autoStart: true
+    },
+    models: {
+      default: 'coze/auto',
+      providers: ['coze', 'openai']
+    },
+    skills: {
+      autoUpdate: true,
+      allowExternal: true
+    }
+  };
+  
+  setTimeout(() => {
+    localStorage.setItem('openclaw_config', JSON.stringify(defaultConfig, null, 2));
+    showToast('默认配置生成成功！', 'success');
+    
+    // 配置完成，跳转到面板
+    setTimeout(() => {
+      setPage('openclaw-dashboard');
+      showToast('欢迎使用 OpenClaw！', 'success');
+    }, 1000);
+  }, 1500);
 }
 
 // ========== OpenClaw 网关管理 ==========
