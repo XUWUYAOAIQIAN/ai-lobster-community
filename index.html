@@ -14,12 +14,8 @@
 <meta property="og:description" content="发现高效工作流、学习 AI 技能、交流最佳实践">
 <meta property="og:url" content="https://lobster-community.example.com">
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
-
 <!-- DOMPurify 库 -->
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js" defer></script>
 
 <style>
 /* ========== 现代设计系统 ========== */
@@ -1334,6 +1330,18 @@ nav {
 
 .modal.active {
  display: flex;
+ align-items: center;
+ justify-content: center;
+ animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+ from {
+  opacity: 0;
+ }
+ to {
+  opacity: 1;
+ }
 }
 
 .modal.closing {
@@ -1568,32 +1576,7 @@ nav {
 }
 
 /* ========== 模态框居中显示 ========== */
-.modal {
- display: flex;
- align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
- from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
- from {
- transform: translateY(20px);
- opacity: 0;
- }
- to {
- transform: translateY(0);
- opacity: 1;
- }
-}
+/* 模态框居中样式已合并到 .modal.active 中 */
 
 .modal-close {
  position: absolute;
@@ -2327,22 +2310,8 @@ nav {
   color: var(--primary-start);
 }
 
-/* 模态框居中 */
-.modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+/* 模态框居中样式已合并到 .modal.active 中 */
+/* 删除重复的 .modal 定义以避免覆盖 display: none */
 
  text-align: center;
 }
