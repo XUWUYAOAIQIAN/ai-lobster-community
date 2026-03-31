@@ -3389,48 +3389,47 @@ const realSkills = [
 
 // ========== 模拟数据 ==========
 const mockData = {
- skills: [
- {
- id: 1,
- title: '自动记账',
- icon: '💰',
- desc: '拍照即记账，自动分类，每月节省 2 小时',
- tags: ['自动化', '财务'],
- author: '张三',
- downloads: 2345,
- rating: 4.8
- },
- {
- id: 2,
- title: '代码审查',
- icon: '🔍',
- desc: 'AI 自动审查代码质量，提供优化建议',
- tags: ['编程', '效率'],
- author: '李四',
- downloads: 1890,
- rating: 4.7
- },
- {
- id: 3,
- title: '文章生成',
- icon: '✍️',
- desc: '根据大纲自动生成高质量文章内容',
- tags: ['写作', 'AI'],
- author: '王五',
- downloads: 3456,
- rating: 4.9
- },
- {
- id: 4,
- title: '日程管理',
- icon: '📅',
- desc: '智能安排日程，自动提醒重要事项',
- tags: ['效率', '时间管理'],
- author: '赵六',
- downloads: 2100,
- rating: 4.6
- }
+ // Skills 数据从 realSkills 动态获取，参考 loadSkills() 函数
+ // 论坛帖子 - 初始为空，由用户发布填充
+ posts: [
+ // 初始帖子为空，用户登录后可发布
  ],
+ // 通知 - 基于用户活动
+ notifications: [],
+ // 课程 - 基础课程列表
+ courses: [
+  {
+   id: 1,
+   title: 'OpenClaw 快速入门',
+   icon: '🦀',
+   desc: '从零开始学习 OpenClaw AI 助手框架，掌握核心概念和基础用法',
+   category: '入门',
+   duration: '2小时',
+   lessons: 8,
+   level: '初级'
+  },
+  {
+   id: 2,
+   title: 'Skill 开发实战',
+   icon: '⚡',
+   desc: '手把手教你开发自定义 Skills，提升 AI 助手能力',
+   category: '进阶',
+   duration: '4小时',
+   lessons: 12,
+   level: '中级'
+  },
+  {
+   id: 3,
+   title: '自动化工作流设计',
+   icon: '🔄',
+   desc: '学习设计高效自动化工作流，让 AI 帮你完成复杂任务',
+   category: '高级',
+   duration: '6小时',
+   lessons: 15,
+   level: '高级'
+  }
+ ]
+};
  posts: [
  {
  id: 1,
@@ -4023,21 +4022,34 @@ function resetSearch() {
 function loadNotifications() {
  const list = document.getElementById('notifications-list');
  if(!list) return;
- 
- const unreadCount = mockData.notifications.filter(n => !n.read).length;
+
+ // 从本地存储获取真实通知数据
+ const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+ const unreadCount = notifications.filter(n => !n.read).length;
  const badge = document.getElementById('noti-badge');
- 
+
  if(unreadCount > 0) {
- badge.textContent = unreadCount;
- badge.style.display = 'flex';
+  badge.textContent = unreadCount;
+  badge.style.display = 'flex';
+ } else {
+  badge.style.display = 'none';
  }
- 
- list.innerHTML = mockData.notifications.map(n => `
- <div class="notification-item ${n.read ? '' : 'unread'}" onclick="readNotification(${n.id})">
- <div class="notification-content">${n.content}</div>
- <div class="notification-time">${n.time}</div>
- </div>
- `).join('');
+
+ if(notifications.length === 0) {
+  list.innerHTML = `
+   <div class="notification-item">
+    <div class="notification-content">暂无通知</div>
+    <div class="notification-time">登录后可查看通知</div>
+   </div>
+  `;
+ } else {
+  list.innerHTML = notifications.map(n => `
+   <div class="notification-item ${n.read ? '' : 'unread'}" onclick="readNotification(${n.id})">
+    <div class="notification-content">${n.content}</div>
+    <div class="notification-time">${n.time}</div>
+   </div>
+  `).join('');
+ }
 }
 
 function showNotifications() {
@@ -4059,10 +4071,14 @@ function readNotification(id) {
 // ========== 数据加载 ==========
 
 function loadStats() {
- document.getElementById('stat-members').textContent = '5,234';
- document.getElementById('stat-skills').textContent = '128';
- document.getElementById('stat-posts').textContent = '1,234';
- document.getElementById('stat-courses').textContent = '12';
+ // 从本地存储获取真实数据
+ const users = JSON.parse(localStorage.getItem('lobster_users') || '[]');
+ const installedSkills = JSON.parse(localStorage.getItem('installed_skills') || '[]');
+ 
+ document.getElementById('stat-members').textContent = users.length > 0 ? users.length.toLocaleString() : '1';
+ document.getElementById('stat-skills').textContent = realSkills.length;
+ document.getElementById('stat-posts').textContent = '0'; // 帖子需用户登录后发布
+ document.getElementById('stat-courses').textContent = '3'; // 基础课程数量
 }
 
 function loadSkills() {
@@ -4117,38 +4133,54 @@ function loadForumPosts() {
  const content = document.getElementById('forum-content');
  const count = document.getElementById('posts-count');
 
+ // 从本地存储获取真实帖子数据
+ const storedPosts = JSON.parse(localStorage.getItem('forum_posts') || '[]');
+ const posts = storedPosts.length > 0 ? storedPosts : [];
+
  if(content) {
- content.innerHTML = mockData.posts.map(post => {
+ if(posts.length === 0) {
+  // 显示空状态提示
+  content.innerHTML = `
+   <div class="empty-state">
+    <div class="empty-icon">💬</div>
+    <h3>暂无帖子</h3>
+    <p>成为第一个发帖的人吧！</p>
+    <button class="btn-primary" onclick="showAuthModal()">登录后发帖</button>
+   </div>
+  `;
+ } else {
+  content.innerHTML = posts.map(post => {
    // 检查当前用户是否已点赞
    const likedPosts = JSON.parse(localStorage.getItem('liked_posts') || '[]');
    const isLiked = likedPosts.includes(post.id);
 
    return `
- <div class="forum-post" onclick="showPostDetail(${post.id})">
- <div class="forum-post-header">
- <div class="forum-avatar">${post.avatar}</div>
- <div class="forum-author">
- <div class="forum-author-name">${post.author}</div>
- <div class="forum-post-time">${post.time}</div>
- </div>
- </div>
- <div class="forum-post-title">${post.title}</div>
- <div class="forum-post-content">${post.content.substring(0, 100)}...</div>
- <div class="forum-post-footer">
- <button class="forum-action-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${post.id})">
- ${isLiked ? '❤️' : '👍'} <span id="likes-${post.id}">${post.likes}</span>
- </button>
- <button class="forum-action-btn" onclick="event.stopPropagation(); showPostDetail(${post.id})">
- 💬 <span id="replies-${post.id}">${post.replies}</span>
- </button>
- </div>
- </div>
- `;
- }).join('');
+  <div class="forum-post" onclick="showPostDetail(${post.id})">
+   <div class="forum-post-header">
+    <div class="forum-avatar">${post.avatar}</div>
+    <div class="forum-author">
+     <div class="forum-author-name">${post.author}</div>
+     <div class="forum-post-time">${post.time}</div>
+    </div>
+   </div>
+   <div class="forum-post-title">${post.title}</div>
+   <div class="forum-post-content">${post.content.substring(0, 100)}...</div>
+   <div class="forum-post-footer">
+    <button class="forum-action-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${post.id})">
+     ${isLiked ? '❤️' : '👍'} <span id="likes-${post.id}">${post.likes || 0}</span>
+    </button>
+    <button class="forum-action-btn" onclick="event.stopPropagation(); showPostDetail(${post.id})">
+     💬 <span id="replies-${post.id}">${post.comments ? post.comments.length : 0}</span>
+    </button>
+   </div>
+  </div>
+  `;
+  }).join('');
+ }
  }
 
  if(count) {
-  count.textContent = mockData.posts.length + ' 条帖子';
+  count.textContent = posts.length + ' 条帖子';
  }
 }
 
@@ -4432,8 +4464,11 @@ function loadCourses() {
  const content = document.getElementById('learn-content');
  const count = document.getElementById('courses-count');
 
+ // 使用 mockData 中定义的真实课程
+ const courses = mockData.courses || [];
+
  if(content) {
- content.innerHTML = mockData.courses.map(course => {
+ content.innerHTML = courses.map(course => {
    // 检查用户是否已开始学习
    const userProgress = getUserCourseProgress(course.id);
    const progressPercent = userProgress ? userProgress.progress : 0;
@@ -4445,19 +4480,34 @@ function loadCourses() {
  <div class="course-cover">
   ${course.icon}
   ${isCompleted ? '<span class="course-badge">✅ 已完成</span>' : ''}
-  ${isStarted && !isCompleted ? `<span class="course-progress-badge">${progressPercent}%</span>` : ''}
+  ${isStarted && !isCompleted ? `<span class="course-progress-badge">${progressPercent}%</span>` : '' }
  </div>
  <div class="course-body">
   <div class="course-title">${course.title}</div>
   <div class="course-desc">${course.desc}</div>
   <div class="course-meta">
-   <span>📚 ${course.duration}</span>
-   <span>👥 ${course.students} 人在学</span>
-   <span>⭐ ${course.rating}</span>
+   <span>⏱️ ${course.duration}</span>
+   <span>📖 ${course.lessons} 课时</span>
+   <span>📊 ${course.level}</span>
   </div>
   ${isStarted ? `
    <div class="course-progress-bar">
     <div class="progress-fill" style="width: ${progressPercent}%"></div>
+   </div>
+  ` : ''}
+  <button class="card-action" onclick="event.stopPropagation(); startCourse(${course.id})">
+   ${isCompleted ? '🔄 重新学习' : isStarted ? '继续学习' : '开始学习'}
+  </button>
+ </div>
+ </div>
+ `;
+ }).join('');
+ }
+
+ if(count) {
+  count.textContent = courses.length + ' 门课程';
+ }
+}
    </div>
   ` : ''}
  </div>
