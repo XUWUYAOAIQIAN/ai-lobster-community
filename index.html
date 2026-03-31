@@ -1322,14 +1322,14 @@ nav {
  right: 0;
  bottom: 0;
  background: rgba(0, 0, 0, 0.5);
- display: none;
+ display: none !important;
  align-items: center;
  justify-content: center;
  z-index: 999;
 }
 
 .modal.active {
- display: flex;
+ display: flex !important;
  align-items: center;
  justify-content: center;
  animation: fadeIn 0.2s ease-out;
@@ -3016,7 +3016,7 @@ nav {
 </div>
 
 <!-- 登录模态框 -->
-<div class="modal" id="auth-modal" onclick="if(event.target===this) closeAuthModal()">
+<div class="modal" id="auth-modal" style="display: none !important;" onclick="if(event.target===this) closeAuthModal()">
  <div class="modal-content">
  <button class="modal-close" onclick="closeAuthModal()">✕</button>
  <h2 class="modal-title">🔑 登录 / 注册</h2>
@@ -3072,7 +3072,7 @@ nav {
 </div>
 
 <!-- 用户资料模态框 -->
-<div class="modal" id="profile-modal" onclick="if(event.target===this) closeProfileModal()">
+<div class="modal" id="profile-modal" style="display: none !important;" onclick="if(event.target===this) closeProfileModal()">
  <div class="modal-content profile-content">
   <button class="modal-close" onclick="closeProfileModal()">✕</button>
   <h2 class="modal-title">👤 个人资料</h2>
@@ -3125,7 +3125,7 @@ nav {
 </div>
 
 <!-- 通知模态框 -->
-<div class="modal" id="notifications-modal" onclick="if(event.target===this) closeNotificationsModal()">
+<div class="modal" id="notifications-modal" style="display: none !important;" onclick="if(event.target===this) closeNotificationsModal()">
  <div class="modal-content">
  <button class="modal-close" onclick="closeNotificationsModal()">✕</button>
  <h2 class="modal-title">🔔 通知</h2>
@@ -3136,7 +3136,7 @@ nav {
 </div>
 
 <!-- Skill 详情模态框 -->
-<div class="modal" id="skill-detail-modal" onclick="if(event.target===this) closeSkillDetail()">
+<div class="modal" id="skill-detail-modal" style="display: none !important;" onclick="if(event.target===this) closeSkillDetail()">
  <div class="modal-content skill-detail-content">
   <button class="modal-close" onclick="closeSkillDetail()">✕</button>
   <div class="skill-detail-header">
@@ -3577,12 +3577,18 @@ document.addEventListener('DOMContentLoaded', function() {
  // 应用主题
  document.documentElement.setAttribute('data-theme', currentTheme);
  updateThemeButton();
- 
+
+ // 强制隐藏所有模态框（修复弹窗自动显示问题）
+ document.querySelectorAll('.modal').forEach(modal => {
+  modal.classList.remove('active');
+  modal.style.display = 'none';
+ });
+
  // 检查用户登录状态
  if(currentUser) {
  updateLoginButton();
  }
- 
+
  // 加载数据
  loadStats();
  loadSkills();
@@ -3651,16 +3657,13 @@ function toggleMobileMenu() {
 // ========== 登录相关 ==========
 
 function showAuthModal() {
- document.getElementById('auth-modal').classList.add('active');
+ const modal = document.getElementById('auth-modal');
+ modal.style.display = 'flex';
 }
 
 function closeAuthModal() {
  const modal = document.getElementById('auth-modal');
- modal.classList.add('closing');
- setTimeout(() => {
- modal.classList.remove('active');
- modal.classList.remove('closing');
- }, 200);
+ modal.style.display = 'none';
 }
 
 function validateEmail(email) {
@@ -4182,7 +4185,7 @@ function showPostDetail(postId) {
  `).join('');
 
  const modalHtml = `
- <div class="modal" id="post-detail-modal" onclick="if(event.target===this) closePostDetail()">
+ <div class="modal" id="post-detail-modal" style="display: none !important;" onclick="if(event.target===this) closePostDetail()">
   <div class="modal-content post-detail-content">
    <button class="modal-close" onclick="closePostDetail()">✕</button>
    <div class="post-detail-body">
@@ -4296,7 +4299,7 @@ function createNewPost() {
  }
 
  const modalHtml = `
- <div class="modal" id="create-post-modal" onclick="if(event.target===this) closeCreatePost()">
+ <div class="modal" id="create-post-modal" style="display: none !important;" onclick="if(event.target===this) closeCreatePost()">
   <div class="modal-content">
    <button class="modal-close" onclick="closeCreatePost()">✕</button>
    <h2 class="modal-title">✍️ 发表新帖</h2>
@@ -4460,7 +4463,7 @@ function showCourseDetail(courseId) {
  const isCompleted = progressPercent === 100;
 
  const modalHtml = `
- <div class="modal" id="course-detail-modal" onclick="if(event.target===this) closeCourseDetail()">
+ <div class="modal" id="course-detail-modal" style="display: none !important;" onclick="if(event.target===this) closeCourseDetail()">
   <div class="modal-content course-detail-content">
    <button class="modal-close" onclick="closeCourseDetail()">✕</button>
    <div class="course-detail-body">
