@@ -4123,55 +4123,104 @@ function loadForumPosts() {
  const content = document.getElementById('forum-content');
  const count = document.getElementById('posts-count');
 
- // 从本地存储获取真实帖子数据
- const storedPosts = JSON.parse(localStorage.getItem('forum_posts') || '[]');
- const posts = storedPosts.length > 0 ? storedPosts : [];
+ // 从 Supabase 读取帖子数据
+ supabase
+  .from('posts')
+  .select(`
+   *,
+   profiles:user_id (username, avatar)
+  `)
+  .order('created_at', { ascending: false })
+  .then(({ data: posts, error }) => {
+   if (error) {
+    console.error('加载帖子失败:', error);
+    // 降级到 localStorage
+    const storedPosts = JSON.parse(localStorage.getItem('forum_posts') || '[]');
+    renderPosts(storedPosts);
+    return;
+   }
 
- if(content) {
- if(posts.length === 0) {
-  // 显示空状态提示
-  content.innerHTML = `
-   <div class="empty-state">
-    <div class="empty-icon">💬</div>
-    <h3>暂无帖子</h3>
-    <p>成为第一个发帖的人吧！</p>
-    <button class="btn-primary" onclick="showAuthModal()">登录后发帖</button>
-   </div>
-  `;
- } else {
-  content.innerHTML = posts.map(post => {
-   // 检查当前用户是否已点赞
-   const likedPosts = JSON.parse(localStorage.getItem('liked_posts') || '[]');
-   const isLiked = likedPosts.includes(post.id);
+   if (!posts || posts.length === 0) {
+    if(content) {
+     content.innerHTML = `
+      <div class="empty-state">
+       <div class="empty-icon">💬</div>
+       <h3>暂无帖子</h3>
+       <p>成为第一个发帖的人吧！</p>
+       <button class="btn-primary" onclick="showAuthModal()">登录后发帖</button>
+      </div>
+     `;
+    }
+   } else {
+    renderPosts(posts);
+   }
+  });
+}
 
-   return `
-  <div class="forum-post" onclick="showPostDetail(${post.id})">
-   <div class="forum-post-header">
-    <div class="forum-avatar">${post.avatar}</div>
-    <div class="forum-author">
-     <div class="forum-author-name">${post.author}</div>
-     <div class="forum-post-time">${post.time}</div>
+// 渲染帖子列表
+function renderPosts(posts) {
+ const content = document.getElementById('forum-content');
+ const count = document.getElementById('posts-count');
+
+ // 检查当前用户的点赞状态
+ const userId = getCurrentUserId();
+ const loadLikes = userId ? supabase
+  .from('post_likes')
+  .select('post_id')
+  .eq('user_id', userId)
+  .then(({ data }) => data.map(l => l.post_id))
+  : Promise.resolve([]);
+
+ loadLikes.then(likedPosts => {
+  if(content) {
+   content.innerHTML = posts.map(post => {
+    const isLiked = likedPosts.includes(post.id);
+    const authorName = post.profiles?.username || '匿名用户';
+    const authorAvatar = post.profiles?.avatar || '👤';
+    const timeAgo = formatTimeAgo(post.created_at);
+
+    return `
+    <div class="forum-post" onclick="showPostDetail(${post.id})">
+    <div class="forum-post-header">
+     <div class="forum-avatar">${authorAvatar}</div>
+     <div class="forum-author">
+      <div class="forum-author-name">${authorName}</div>
+      <div class="forum-post-time">${timeAgo}</div>
+     </div>
+    </div>
+    <div class="forum-post-title">${post.title}</div>
+    <div class="forum-post-content">${post.content.substring(0, 100)}...</div>
+    <div class="forum-post-footer">
+     <button class="forum-action-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${post.id})">
+      ${isLiked ? '❤️' : '👍'} <span id="likes-${post.id}">${post.likes_count || 0}</span>
+     </button>
+     <button class="forum-action-btn" onclick="event.stopPropagation(); showPostDetail(${post.id})">
+      💬 <span id="replies-${post.id}">${post.comments_count || 0}</span>
+     </button>
     </div>
    </div>
-   <div class="forum-post-title">${post.title}</div>
-   <div class="forum-post-content">${post.content.substring(0, 100)}...</div>
-   <div class="forum-post-footer">
-    <button class="forum-action-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${post.id})">
-     ${isLiked ? '❤️' : '👍'} <span id="likes-${post.id}">${post.likes || 0}</span>
-    </button>
-    <button class="forum-action-btn" onclick="event.stopPropagation(); showPostDetail(${post.id})">
-     💬 <span id="replies-${post.id}">${post.comments ? post.comments.length : 0}</span>
-    </button>
-   </div>
-  </div>
-  `;
-  }).join('');
- }
- }
+   `;
+   }).join('');
+  }
 
- if(count) {
-  count.textContent = posts.length + ' 条帖子';
- }
+  if(count) {
+   count.textContent = posts.length + ' 条帖子';
+  }
+ });
+}
+
+// 格式化时间为相对时间
+function formatTimeAgo(dateString) {
+ if (!dateString) return '未知';
+ const date = new Date(dateString);
+ const now = new Date();
+ const seconds = Math.floor((now - date) / 1000);
+
+ if (seconds < 60) return '刚刚';
+ if (seconds < 3600) return Math.floor(seconds / 60) + '分钟前';
+ if (seconds < 86400) return Math.floor(seconds / 3600) + '小时前';
+ if (seconds < 604800) return Math.floor(seconds / 86400) + '天前';
+ return date.toLocaleDateString();
 }
 
 // 点赞/取消点赞
@@ -4181,127 +4230,165 @@ function toggleLike(postId) {
   return;
  }
 
- const likedPosts = JSON.parse(localStorage.getItem('liked_posts') || '[]');
- const post = mockData.posts.find(p => p.id === postId);
+ const userId = getCurrentUserId();
+ if (!userId) return;
 
- if(!post) return;
+ // 检查是否已点赞
+ supabase
+  .from('post_likes')
+  .select('id')
+  .eq('post_id', postId)
+  .eq('user_id', userId)
+  .single()
+  .then(({ data, error }) => {
+   if (error && error.code !== 'PGRST116') {
+    console.error('检查点赞失败:', error);
+    return;
+   }
 
- const index = likedPosts.indexOf(postId);
- if(index > -1) {
-  // 取消点赞
-  likedPosts.splice(index, 1);
-  post.likes--;
- } else {
-  // 点赞
-  likedPosts.push(postId);
-  post.likes++;
- }
-
- localStorage.setItem('liked_posts', JSON.stringify(likedPosts));
-
- // 更新 UI
- const likesSpan = document.getElementById(`likes-${postId}`);
- if(likesSpan) {
-  likesSpan.textContent = post.likes;
-  const btn = likesSpan.parentElement;
-  if(index > -1) {
-   btn.classList.remove('liked');
-   btn.innerHTML = `👍 <span id="likes-${postId}">${post.likes}</span>`;
-  } else {
-   btn.classList.add('liked');
-   btn.innerHTML = `❤️ <span id="likes-${postId}">${post.likes}</span>`;
-  }
- }
-
- // 更新当前用户的统计数据
- currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
- saveCurrentUser();
- showToast(index > -1 ? '已取消点赞' : '点赞成功！', 'success');
-}
-
-// 保存当前用户
-function saveCurrentUser() {
- if(!currentUser) return;
- sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
-
- const users = JSON.parse(localStorage.getItem('lobster_users') || '[]');
- const userIndex = users.findIndex(u => u.id === currentUser.id);
- if(userIndex > -1) {
-  users[userIndex] = currentUser;
-  localStorage.setItem('lobster_users', JSON.stringify(users));
- }
+   if (data) {
+    // 已点赞，取消点赞
+    supabase
+     .from('post_likes')
+     .delete()
+     .eq('id', data.id)
+     .then(() => {
+      // 减少点赞数
+      supabase
+       .from('posts')
+       .update({ likes_count: supabase.sql`likes_count - 1` })
+       .eq('id', postId)
+       .then(() => {
+        loadForumPosts();
+        showToast('已取消点赞', 'info');
+       });
+     });
+   } else {
+    // 未点赞，添加点赞
+    supabase
+     .from('post_likes')
+     .insert({ post_id: postId, user_id: userId })
+     .then(() => {
+      // 增加点赞数
+      supabase
+       .from('posts')
+       .update({ likes_count: supabase.sql`likes_count + 1` })
+       .eq('id', postId)
+       .then(() => {
+        loadForumPosts();
+        showToast('点赞成功！', 'success');
+       });
+     });
+   }
+  });
 }
 
 // 显示帖子详情
 function showPostDetail(postId) {
- const post = mockData.posts.find(p => p.id === postId);
- if(!post) return;
+ // 从 Supabase 读取帖子详情
+ supabase
+  .from('posts')
+  .select(`
+   *,
+   profiles:user_id (username, avatar)
+  `)
+  .eq('id', postId)
+  .single()
+  .then(({ data: post, error }) => {
+   if (error || !post) {
+    showToast('帖子不存在', 'error');
+    return;
+   }
 
- // 检查当前用户是否已点赞
- const likedPosts = JSON.parse(localStorage.getItem('liked_posts') || '[]');
- const isLiked = likedPosts.includes(postId);
+   // 检查当前用户是否已点赞
+   const userId = getCurrentUserId();
+   const checkLike = userId ? supabase
+    .from('post_likes')
+    .select('id')
+    .eq('post_id', postId)
+    .eq('user_id', userId)
+    .single()
+    : Promise.resolve({ data: null });
 
- // 生成评论列表
- const commentsHtml = (post.comments || []).map(comment => `
-  <div class="comment">
-   <div class="comment-header">
-    <span class="comment-avatar">${comment.avatar}</span>
-    <span class="comment-author">${comment.author}</span>
-    <span class="comment-time">${comment.time}</span>
-   </div>
-   <div class="comment-content">${comment.content}</div>
-  </div>
- `).join('');
+   // 读取评论
+   const loadComments = supabase
+    .from('comments')
+    .select(`
+     *,
+     profiles:user_id (username, avatar)
+    `)
+    .eq('post_id', postId)
+    .order('created_at', { ascending: true });
 
- const modalHtml = `
- <div class="modal" id="post-detail-modal" style="display: none !important;" onclick="if(event.target===this) closePostDetail()">
-  <div class="modal-content post-detail-content">
-   <button class="modal-close" onclick="closePostDetail()">✕</button>
-   <div class="post-detail-body">
-    <div class="forum-post-header">
-     <div class="forum-avatar">${post.avatar}</div>
-     <div class="forum-author">
-      <div class="forum-author-name">${post.author}</div>
-      <div class="forum-post-time">${post.time}</div>
+   Promise.all([checkLike, loadComments]).then(([{ data: likeData }, { data: comments }]) => {
+    const isLiked = !!likeData;
+    const authorName = post.profiles?.username || '匿名用户';
+    const authorAvatar = post.profiles?.avatar || '👤';
+    const timeAgo = formatTimeAgo(post.created_at);
+
+    // 生成评论列表
+    const commentsHtml = (comments || []).map(comment => `
+     <div class="comment">
+      <div class="comment-header">
+       <span class="comment-avatar">${comment.profiles?.avatar || '👤'}</span>
+       <span class="comment-author">${comment.profiles?.username || '匿名用户'}</span>
+       <span class="comment-time">${formatTimeAgo(comment.created_at)}</span>
+      </div>
+      <div class="comment-content">${comment.content}</div>
+     </div>
+    `).join('');
+
+    const modalHtml = `
+    <div class="modal" id="post-detail-modal" style="display: none !important;" onclick="if(event.target===this) closePostDetail()">
+     <div class="modal-content post-detail-content">
+      <button class="modal-close" onclick="closePostDetail()">✕</button>
+      <div class="post-detail-body">
+       <div class="forum-post-header">
+        <div class="forum-avatar">${authorAvatar}</div>
+        <div class="forum-author">
+         <div class="forum-author-name">${authorName}</div>
+         <div class="forum-post-time">${timeAgo}</div>
+        </div>
+       </div>
+       <h2 class="post-detail-title">${post.title}</h2>
+       <div class="post-detail-content">${post.content}</div>
+       
+       <div class="post-detail-actions">
+        <button class="forum-action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+         ${isLiked ? '❤️' : '👍'} <span id="detail-likes-${post.id}">${post.likes_count || 0}</span>
+        </button>
+        <button class="forum-action-btn">
+         💬 <span>${post.comments_count || 0}</span>
+        </button>
+       </div>
+       
+       <div class="comments-section">
+        <h3>评论 (${comments?.length || 0})</h3>
+        <div class="comments-list">
+         ${commentsHtml || '<p class="text-muted">暂无评论</p>'}
+        </div>
+        
+        <div class="comment-form">
+         <textarea id="comment-input" class="form-input" rows="3" placeholder="写下你的评论..."></textarea>
+         <button class="btn-primary" onclick="addComment(${post.id})" style="margin-top:12px;">发表评论</button>
+        </div>
+       </div>
+      </div>
      </div>
     </div>
-    <h2 class="post-detail-title">${post.title}</h2>
-    <div class="post-detail-content">${post.content}</div>
-    
-    <div class="post-detail-actions">
-     <button class="forum-action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
-      ${isLiked ? '❤️' : '👍'} <span id="detail-likes-${post.id}">${post.likes}</span>
-     </button>
-     <button class="forum-action-btn">
-      💬 <span>${post.replies}</span>
-     </button>
-    </div>
-    
-    <div class="comments-section">
-     <h3>评论 (${post.comments?.length || 0})</h3>
-     <div class="comments-list">
-      ${commentsHtml || '<p class="text-muted">暂无评论</p>'}
-     </div>
-     
-     <div class="comment-form">
-      <textarea id="comment-input" class="form-input" rows="3" placeholder="写下你的评论..."></textarea>
-      <button class="btn-primary" onclick="addComment(${post.id})" style="margin-top:12px;">发表评论</button>
-     </div>
-    </div>
-   </div>
-  </div>
- </div>
- `;
+    `;
 
- // 移除旧的模态框
- const oldModal = document.getElementById('post-detail-modal');
- if(oldModal) {
-  oldModal.remove();
- }
+    // 移除旧的模态框
+    const oldModal = document.getElementById('post-detail-modal');
+    if(oldModal) {
+     oldModal.remove();
+    }
 
- // 添加新的模态框
- document.body.insertAdjacentHTML('beforeend', modalHtml);
- document.getElementById('post-detail-modal').style.setProperty('display', 'block', 'important');
+    // 添加新的模态框
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.getElementById('post-detail-modal').style.setProperty('display', 'block', 'important');
+   });
+  });
 }
 
 // 关闭帖子详情
@@ -4327,37 +4414,34 @@ function addComment(postId) {
   return;
  }
 
- const post = mockData.posts.find(p => p.id === postId);
- if(!post) return;
+ const userId = getCurrentUserId();
+ if (!userId) return;
 
- // 创建新评论
- const newComment = {
-  id: 'c' + Date.now(),
-  author: currentUser.username,
-  avatar: currentUser.avatar,
-  content: content,
-  time: '刚刚'
- };
+ // 添加评论到 Supabase
+ supabase
+  .from('comments')
+  .insert({
+   post_id: postId,
+   user_id: userId,
+   content: content
+  })
+  .then(({ error }) => {
+   if (error) {
+    showToast('评论发表失败：' + error.message, 'error');
+    return;
+   }
 
- // 添加到帖子评论
- if(!post.comments) {
-  post.comments = [];
- }
- post.comments.push(newComment);
- post.replies++;
-
- // 保存到 localStorage
- const postsData = JSON.stringify(mockData.posts);
- localStorage.setItem('forum_posts', postsData);
-
- // 更新 UI
- showToast('评论发表成功！', 'success');
- closePostDetail();
- loadForumPosts(); // 刷新帖子列表
-
- // 更新用户统计
- currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
- saveCurrentUser();
+   // 更新帖子评论数
+   supabase
+    .from('posts')
+    .update({ comments_count: supabase.sql`comments_count + 1` })
+    .eq('id', postId)
+    .then(() => {
+     showToast('评论发表成功！', 'success');
+     showPostDetail(postId); // 刷新帖子详情
+     loadForumPosts(); // 刷新帖子列表
+    });
+  });
 }
 
 // 发新帖子
@@ -4421,33 +4505,30 @@ function submitPost() {
   return;
  }
 
- // 创建新帖子
- const newPost = {
-  id: Date.now(),
-  title: title,
-  content: content,
-  author: currentUser.username,
-  avatar: currentUser.avatar,
-  time: '刚刚',
-  likes: 0,
-  replies: 0,
-  comments: []
- };
+ const userId = getCurrentUserId();
+ if (!userId) {
+  showToast('请先登录', 'warning');
+  return;
+ }
 
- // 添加到帖子列表
- mockData.posts.unshift(newPost);
+ // 创建新帖子到 Supabase
+ supabase
+  .from('posts')
+  .insert({
+   user_id: userId,
+   title: title,
+   content: content
+  })
+  .then(({ error }) => {
+   if (error) {
+    showToast('帖子发表失败：' + error.message, 'error');
+    return;
+   }
 
- // 保存到 localStorage
- localStorage.setItem('forum_posts', JSON.stringify(mockData.posts));
-
- // 更新 UI
- showToast('帖子发表成功！', 'success');
- closeCreatePost();
- loadForumPosts();
-
- // 更新用户统计
- currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
- saveCurrentUser();
+   showToast('帖子发表成功！', 'success');
+   closeCreatePost();
+   loadForumPosts();
+  });
 }
 
 function loadCourses() {

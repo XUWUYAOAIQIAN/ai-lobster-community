@@ -1,11 +1,12 @@
 {
-  "lastHeartbeat": "2026-04-04T22:10:00+08:00",
+  "lastHeartbeat": "2026-04-04T22:26:00+08:00",
   "lastChecks": {
-    "calendar": "2026-04-04T22:10:00+08:00",
+    "calendar": "2026-04-04T22:26:00+08:00",
     "github": null,
     "memoryCleanup": null,
     "statsCheck": null
   },
-  "lastConversation": "2026-04-04T21:36:00+08:00",
-  "conversationCount": 5
+  "lastConversation": "2026-04-04T22:22:00+08:00",
+  "conversationCount": 5,
+  "upcomingEvents": []
 }
