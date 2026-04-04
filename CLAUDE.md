@@ -57,6 +57,15 @@
         ├── README.md
         ├── OPENCLAW_INTEGRATION.md
         └── .learnings/
+    ├── AUDIT_REPORT.md
+    ├── ERRORS.md
+    ├── FEATURE_REQUESTS.md
+    ├── LEARNINGS.md
+    ├── REAL_TEST_REPORT.md
+    ├── SKILL_INTEGRATION_GUIDE.md
+    ├── ARCHITECTURE_PATTERNS.md   # 10大架构模式
+    ├── MULTI_AGENT.md             # 多Agent协作流程
+    └── BACKEND_MIGRATION.md       # 龙虾后端化方案
 ```
 
 ---
