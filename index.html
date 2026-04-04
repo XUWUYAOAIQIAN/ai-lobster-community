@@ -3616,9 +3616,7 @@ document.addEventListener('DOMContentLoaded', function() {
  });
 
  // 检查用户登录状态
- if(currentUser) {
- updateLoginButton();
- }
+ checkAuthStatus();
 
  // 加载数据
  loadStats();
@@ -3805,51 +3803,43 @@ function handleRegister() {
   return;
  }
 
- // 检查邮箱是否已注册
- const users = JSON.parse(localStorage.getItem('lobster_users') || '[]');
- if(users.some(u => u.email === email)) {
-  document.getElementById('reg-email-error').textContent = '该邮箱已被注册';
-  return;
- }
-
  // 禁用提交按钮，显示加载状态
  submitBtn.disabled = true;
  const originalText = submitBtn.textContent;
  submitBtn.textContent = '注册中...';
 
- try {
-  // 创建新用户
-  const newUser = {
-   id: 'u' + Date.now(),
-   username: username,
-   email: email,
-   avatar: '🦞',
-   bio: '',
-   createdAt: new Date().toISOString(),
-   installedSkills: [],
-   skillsUsed: 0
-  };
+ // 使用 Supabase Auth 注册
+ supabase.auth.signUp({
+  email,
+  password,
+  options: {
+    data: { username }
+  }
+ }).then(async ({ data, error }) => {
+  if (error) {
+   // 处理错误
+   if (error.message.includes('User already registered')) {
+    document.getElementById('reg-email-error').textContent = '该邮箱已被注册';
+   } else {
+    document.getElementById('reg-email-error').textContent = error.message;
+   }
+   submitBtn.disabled = false;
+   submitBtn.textContent = originalText;
+   return;
+  }
 
-  // 保存用户
-  users.push(newUser);
-  localStorage.setItem('lobster_users', JSON.stringify(users));
+  if (data.user) {
+   // 注册成功，切换到登录标签提示用户验证邮箱或登录
+   switchAuthTab('login');
+   showToast('注册成功！请登录您的账号', 'success');
+  } else {
+   document.getElementById('reg-email-error').textContent = '注册失败，请重试';
+  }
 
-  // 自动登录
-  currentUser = newUser;
-  sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
-
-  // 显示欢迎消息
-  showWelcomeMessage(currentUser.username);
-  
-  // 关闭弹窗
-  closeAuthModal();
-  updateLoginButton();
-  showToast('注册成功！欢迎加入 AI龙虾社区 🎉', 'success');
- } finally {
   // 恢复按钮状态
   submitBtn.disabled = false;
   submitBtn.textContent = originalText;
- }
+ });
 }
 
 // 打开个人资料模态框
@@ -5643,10 +5633,13 @@ setInterval(updateOpenClawStatus, 30000);
 function handleLogout() {
  if(!confirm('确定要退出登录吗？')) return;
 
- currentUser = null;
- sessionStorage.removeItem('lobster_user');
- updateLoginButton();
- showToast('已退出登录', 'info');
+ // 使用 Supabase Auth 退出
+ supabase.auth.signOut().then(() => {
+  currentUser = null;
+  sessionStorage.removeItem('lobster_user');
+  updateLoginButton();
+  showToast('已退出登录', 'info');
+ });
 }
 
 // 2. 修改 handleAuth 函数，使其从 localStorage 读取用户
@@ -5683,33 +5676,51 @@ async function handleAuth() {
  }
 
  try {
-  // 从 localStorage 读取用户数据
-  const users = JSON.parse(localStorage.getItem('lobster_users') || '[]');
-  const user = users.find(u => u.email === email);
-
-  if(!user) {
-   emailError.textContent = '该邮箱未注册，请先注册';
-   return;
-  }
-
-  // 模拟密码验证（实际项目中需要加密）
-  if(password.length < 6) {
-   passwordError.textContent = '密码错误';
-   return;
-  }
-
-  // 登录成功
   showToast('登录中...', 'info');
-  await new Promise(resolve => setTimeout(resolve, 1000));
 
-  currentUser = user;
-  sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
+  // 使用 Supabase Auth 登录
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
 
-  updateLoginButton();
-  closeAuthModal();
-  showToast('登录成功！欢迎回来，' + currentUser.username, 'success');
+  if (error) {
+    emailError.textContent = error.message;
+    return;
+  }
+
+  if (!data.user) {
+    emailError.textContent = '登录失败，请重试';
+    return;
+  }
+
+  // 获取用户 profile
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', data.user.id)
+    .single();
+
+  if (profile) {
+    currentUser = {
+      id: data.user.id,
+      username: profile.username,
+      email: profile.email,
+      avatar: profile.avatar || '🧑‍💻',
+      bio: profile.bio || ''
+    };
+    sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
+
+    updateLoginButton();
+    closeAuthModal();
+    showToast('登录成功！欢迎回来，' + currentUser.username, 'success');
+  } else {
+    emailError.textContent = '用户资料加载失败';
+  }
+
  } catch(error) {
   showToast('登录失败：' + error.message, 'error');
+  emailError.textContent = '登录失败，请重试';
  }
 }
 
@@ -5746,6 +5757,77 @@ function clearAllErrors() {
  errors.forEach(error => error.textContent = '');
 }
 
+</script>
+
+<!-- ========== Supabase SDK ========== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ========== Supabase 初始化 ==========
+const SUPABASE_URL = 'https://kzcyyttbncxsflosjcyu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_H2JN_4n2HCkJn2b1tDa5Bg__CH9vNL8';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ========== Auth 辅助函数 ==========
+
+// 获取当前登录用户ID
+function getCurrentUserId() {
+  const user = JSON.parse(sessionStorage.getItem('lobster_user') || 'null');
+  return user?.id || null;
+}
+
+// 监听登录状态变化
+supabase.auth.onAuthStateChange(async (event, session) => {
+  if (session?.user) {
+    // 用户已登录，加载用户资料
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+    
+    if (profile) {
+      currentUser = {
+        id: session.user.id,
+        username: profile.username,
+        email: profile.email,
+        avatar: profile.avatar || '🧑‍💻',
+        bio: profile.bio || ''
+      };
+      sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
+    }
+  } else {
+    // 用户已登出
+    currentUser = null;
+    sessionStorage.removeItem('lobster_user');
+  }
+  updateHeaderAuth();
+  updateLoginButton();
+});
+
+// 检查登录状态（初始化时调用）
+async function checkAuthStatus() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+    
+    if (profile) {
+      currentUser = {
+        id: session.user.id,
+        username: profile.username,
+        email: profile.email,
+        avatar: profile.avatar || '🧑‍💻',
+        bio: profile.bio || ''
+      };
+      sessionStorage.setItem('lobster_user', JSON.stringify(currentUser));
+    }
+  }
+  updateHeaderAuth();
+  updateLoginButton();
+}
 </script>
 
 </body>
