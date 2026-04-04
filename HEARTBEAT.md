@@ -1,5 +1,31 @@
 # HEARTBEAT.md
 
-# Keep this file empty (or with only comments) to skip heartbeat API calls.
+## 心跳任务清单
 
-# Add tasks below when you want the agent to check something periodically.
+当收到心跳轮询时，按以下顺序检查：
+
+### 🔴 高优先级（需要主动通知）
+- 无（暂时没有需要强提醒的事项）
+
+### 🟡 常规检查（轮换进行，每次心跳选 1-2 项）
+1. **日历检查** — 未来 24h 是否有日程？
+2. **龙虾社区** — 今日 GitHub 有新活动吗？（可选）
+
+### 🟢 低优先级维护（每 3-5 个心跳做一次）
+3. **记忆整理** — 检查 memory/ 是否有未归档的日记
+4. **Stats 清理** — 检查 session_status 消耗是否异常
+
+---
+
+## 状态文件
+检查 `memory/heartbeat-state.json` 记录上次检查时间，避免重复检查。
+
+## 静默条件（回复 HEARTBEAT_OK）
+- 深夜 23:00–08:00，除非有紧急事项
+- 距离上次检查 < 30 分钟
+- 心跳任务清单为空时
+
+## 主动通知条件
+- 日历事件 < 2h 开始
+- 发现值得分享的有趣内容
+- > 8h 未与用户对话（且有有价值的内容）
