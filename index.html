@@ -4596,36 +4596,59 @@ function loadCourses() {
 function getUserCourseProgress(courseId) {
  if(!currentUser) return null;
 
- const userProgress = JSON.parse(localStorage.getItem('user_course_progress') || '{}');
- return userProgress[currentUser.id]?.[courseId] || null;
+ const userId = getCurrentUserId();
+ if (!userId) return null;
+
+ // 从 Supabase 读取课程进度
+ return supabase
+  .from('course_progress')
+  .select('*')
+  .eq('user_id', userId)
+  .eq('course_id', courseId)
+  .single()
+  .then(({ data, error }) => {
+   if (error) {
+    console.error('加载课程进度失败:', error);
+    return null;
+   }
+   return data;
+  });
 }
 
 // 保存用户课程进度
 function saveUserCourseProgress(courseId, progress, chapter, duration) {
  if(!currentUser) return;
 
- const userProgress = JSON.parse(localStorage.getItem('user_course_progress') || '{}');
- if(!userProgress[currentUser.id]) {
-  userProgress[currentUser.id] = {};
- }
+ const userId = getCurrentUserId();
+ if (!userId) return;
 
- userProgress[currentUser.id][courseId] = {
-  courseId,
-  progress,
-  currentChapter: chapter || 0,
-  totalDuration: duration || 0,
-  lastStudyTime: new Date().toISOString()
- };
-
- localStorage.setItem('user_course_progress', JSON.stringify(userProgress));
+ supabase
+  .from('course_progress')
+  .upsert({
+   user_id: userId,
+   course_id: courseId,
+   progress: progress || 0,
+   current_chapter: chapter || 0,
+   total_duration: duration || 0,
+   last_study_at: new Date().toISOString(),
+   completed_at: progress >= 100 ? new Date().toISOString() : null
+  }, {
+   onConflict: 'user_id,course_id'
+  })
+  .then(({ error }) => {
+   if (error) {
+    console.error('保存课程进度失败:', error);
+   }
+  });
 }
 
 // 显示课程详情
-function showCourseDetail(courseId) {
+async function showCourseDetail(courseId) {
  const course = mockData.courses.find(c => c.id === courseId);
  if(!course) return;
 
- const userProgress = getUserCourseProgress(courseId);
+ // 获取课程进度
+ const userProgress = await getUserCourseProgress(courseId);
  const progressPercent = userProgress ? userProgress.progress : 0;
  const isStarted = progressPercent > 0;
  const isCompleted = progressPercent === 100;
@@ -4669,7 +4692,7 @@ function showCourseDetail(courseId) {
     <div class="course-chapters">
      <h3>课程章节</h3>
      <div class="chapters-list">
-      ${generateCourseChapters(course)}
+      ${generateCourseChapters(course, userProgress)}
      </div>
     </div>
     
@@ -4699,11 +4722,11 @@ function showCourseDetail(courseId) {
 }
 
 // 生成课程章节
-function generateCourseChapters(course) {
+function generateCourseChapters(course, userProgress) {
  const chapters = getCourseChapters(course.id);
+ const currentChapter = userProgress ? userProgress.current_chapter : 0;
+ 
  return chapters.map((chapter, index) => {
-  const userProgress = getUserCourseProgress(course.id);
-  const currentChapter = userProgress ? userProgress.currentChapter : 0;
   const isCompleted = index < currentChapter;
   const isCurrent = index === currentChapter;
   const isLocked = index > currentChapter;
@@ -4762,7 +4785,7 @@ function closeCourseDetail() {
 }
 
 // 开始学习
-function startCourse(courseId) {
+async function startCourse(courseId) {
  if(!currentUser) {
   showToast('请先登录', 'warning');
   return;
@@ -4773,34 +4796,26 @@ function startCourse(courseId) {
  closeCourseDetail();
  loadCourses();
  showToast('学习开始！继续加油 💪', 'success');
-
- // 更新用户统计
- currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
- saveCurrentUser();
 }
 
 // 继续学习
-function continueCourse(courseId) {
+async function continueCourse(courseId) {
  if(!currentUser) {
   showToast('请先登录', 'warning');
   return;
  }
 
- const userProgress = getUserCourseProgress(courseId);
+ const userProgress = await getUserCourseProgress(courseId);
  if(!userProgress) return;
 
  const newProgress = Math.min(100, userProgress.progress + 10);
- const newChapter = userProgress.currentChapter + 1;
+ const newChapter = userProgress.current_chapter + 1;
 
  showToast('学习进行中...', 'info');
- saveUserCourseProgress(courseId, newProgress, newChapter, userProgress.totalDuration + 10);
+ saveUserCourseProgress(courseId, newProgress, newChapter, (userProgress.total_duration || 0) + 10);
  closeCourseDetail();
  loadCourses();
  showToast('学习进度已更新！继续加油 💪', 'success');
-
- // 更新用户统计
- currentUser.skillsUsed = (currentUser.skillsUsed || 0) + 1;
- saveCurrentUser();
 
  // 检查是否完成
  if(newProgress >= 100) {
@@ -4809,23 +4824,33 @@ function continueCourse(courseId) {
 }
 
 // 重新学习
-function retakeCourse(courseId) {
+async function retakeCourse(courseId) {
  if(!confirm('确定要重新学习这门课程吗？之前的进度将被清除。')) return;
 
- localStorage.removeItem('user_course_progress');
- closeCourseDetail();
- loadCourses();
- showToast('已重置课程进度', 'info');
+ const userId = getCurrentUserId();
+ if (!userId) return;
+
+ // 删除课程进度
+ supabase
+  .from('course_progress')
+  .delete()
+  .eq('user_id', userId)
+  .eq('course_id', courseId)
+  .then(() => {
+   closeCourseDetail();
+   loadCourses();
+   showToast('已重置课程进度', 'info');
+  });
 }
 
 // 检查课程完成
-function checkCourseCompletion(courseId) {
+async function checkCourseCompletion(courseId) {
  const course = mockData.courses.find(c => c.id === courseId);
  if(!course || !currentUser) return;
 
- const userProgress = getUserCourseProgress(courseId);
+ const userProgress = await getUserCourseProgress(courseId);
  if(userProgress && userProgress.progress >= 100) {
-  // 记录完成成就
+  // 记录成就（暂时保留在 localStorage，后续可迁移到 achievements 表）
   const completedCourses = JSON.parse(localStorage.getItem('completed_courses') || '{}');
   if(!completedCourses[currentUser.id]) {
    completedCourses[currentUser.id] = [];
@@ -4840,32 +4865,44 @@ function checkCourseCompletion(courseId) {
 }
 
 // 加载学习统计
-function loadLearningStats() {
+async function loadLearningStats() {
  if(!currentUser) return;
 
- const completedCourses = JSON.parse(localStorage.getItem('completed_courses') || '{}');
- const userCompleted = completedCourses[currentUser.id] || [];
+ const studyTime = await calculateStudyTime();
+ const achievementPoints = await calculateAchievementPoints();
+
+ // 获取完成的课程数量
+ const userId = getCurrentUserId();
+ let completedCount = 0;
+ if (userId) {
+  const { data } = await supabase
+   .from('course_progress')
+   .select('id')
+   .eq('user_id', userId)
+   .eq('progress', 100);
+  completedCount = data ? data.length : 0;
+ }
 
  const statsHtml = `
   <div class="stats-grid">
    <div class="stat-card">
     <div class="stat-icon">📚</div>
     <div class="stat-info">
-     <div class="stat-value">${userCompleted.length}</div>
+     <div class="stat-value">${completedCount}</div>
      <div class="stat-label">已完成课程</div>
     </div>
    </div>
    <div class="stat-card">
     <div class="stat-icon">⏱️</div>
     <div class="stat-info">
-     <div class="stat-value">${calculateStudyTime()}</div>
+     <div class="stat-value">${studyTime}</div>
      <div class="stat-label">学习时长（分钟）</div>
     </div>
    </div>
    <div class="stat-card">
     <div class="stat-icon">🎯</div>
     <div class="stat-info">
-     <div class="stat-value">${calculateAchievementPoints()}</div>
+     <div class="stat-value">${achievementPoints}</div>
      <div class="stat-label">成就点数</div>
     </div>
    </div>
@@ -4879,29 +4916,39 @@ function loadLearningStats() {
 }
 
 // 计算学习时长
-function calculateStudyTime() {
+async function calculateStudyTime() {
  if(!currentUser) return 0;
 
- const userProgress = JSON.parse(localStorage.getItem('user_course_progress') || '{}');
- const progress = userProgress[currentUser.id] || {};
+ const userId = getCurrentUserId();
+ if (!userId) return 0;
 
- let totalTime = 0;
- Object.values(progress).forEach(p => {
-  totalTime += p.totalDuration || 0;
- });
+ const { data } = await supabase
+  .from('course_progress')
+  .select('total_duration')
+  .eq('user_id', userId);
 
- return totalTime;
+ if (!data) return 0;
+
+ return data.reduce((total, item) => total + (item.total_duration || 0), 0);
 }
 
 // 计算成就点数
-function calculateAchievementPoints() {
+async function calculateAchievementPoints() {
  if(!currentUser) return 0;
 
- const completedCourses = JSON.parse(localStorage.getItem('completed_courses') || '{}');
- const userCompleted = completedCourses[currentUser.id] || [];
+ const userId = getCurrentUserId();
+ if (!userId) return 0;
+
+ const { data } = await supabase
+  .from('course_progress')
+  .select('id')
+  .eq('user_id', userId)
+  .eq('progress', 100); // 完成的课程
+
+ if (!data) return 0;
 
  // 每完成一门课程获得 100 点
- return userCompleted.length * 100;
+ return data.length * 100;
 }
 
 // 加载成就
