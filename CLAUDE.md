@@ -51,18 +51,17 @@
 │   ├── coze-openclaw-plugin/
 │   └── openclaw-lark/
 │
-└── 业务项目/
-    └── ai-lobster-community/   # AI龙虾社区（主项目）
-        ├── index.html
-        ├── README.md
-        ├── OPENCLAW_INTEGRATION.md
-        └── .learnings/
-    ├── AUDIT_REPORT.md
-    ├── ERRORS.md
-    ├── FEATURE_REQUESTS.md
-    ├── LEARNINGS.md
-    ├── REAL_TEST_REPORT.md
-    ├── SKILL_INTEGRATION_GUIDE.md
+├── .learnings/        # 经验沉淀
+│   ├── ARCHITECTURE_PATTERNS.md   # 10大架构模式
+│   ├── MULTI_AGENT.md             # 多Agent协作流程
+│   └── BACKEND_MIGRATION.md       # 后端化方案对比
+│
+├── .github/          # GitHub Pages 配置
+├── index.html        # AI龙虾社区（主项目，约4.5k行）
+├── README.md         # 项目说明
+├── OPENCLAW_INTEGRATION.md
+├── PHASE1_DB_SETUP.md     # 后端化阶段1操作指南
+└── PHASE2_CODE_MIGRATION.md # 后端化阶段2代码方案
     ├── ARCHITECTURE_PATTERNS.md   # 10大架构模式
     ├── MULTI_AGENT.md             # 多Agent协作流程
     └── BACKEND_MIGRATION.md       # 龙虾后端化方案
