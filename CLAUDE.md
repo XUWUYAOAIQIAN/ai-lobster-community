@@ -32,13 +32,20 @@
 │   ├── YYYY-MM-DD.md  # 每日原始记录
 │   └── heartbeat-state.json
 │
-├── skills/            # Skills 目录
+├── skills/            # Skills 目录 + 清单
+│   ├── REGISTRY.md   # 全部 Skills 清单（21个）
 │   ├── agent-browser/
 │   ├── find-skills/
 │   ├── self-improving-agent/
 │   ├── skillhub-preference/
 │   ├── summarize/
 │   └── tavily-web-search-for-openclaw/
+│
+├── commands/         # 类斜杠命令参考
+│   └── REFERENCE.md  # 11个命令模式（/stats /help /analyze 等）
+│
+├── stats/            # 使用统计
+│   └── SUMMARY.md    # 月度/历史趋势
 │
 ├── extensions/        # 扩展插件
 │   ├── coze-openclaw-plugin/
@@ -110,6 +117,7 @@
 4. memory/今日.md    → 今日日记
 5. memory/昨日.md   → 昨日日记（如果存在）
 6. CLAUDE.md (本文件) → 项目上下文
+7. commands/REFERENCE.md → 快速命令参考（按需）
 ```
 
 ---
@@ -119,6 +127,19 @@
 ### 开发新功能
 1. 阅读 CLAUDE.md 了解上下文
 2. 创建/更新 `memory/YYYY-MM-DD.md`
+3. 在 `ai-lobster-community/index.html` 中开发
+4. 测试并验证
+5. commit 到 git
+
+### 快速查询命令
+- `/stats` → 查看使用统计
+- `/skills` → 查看 Skills 清单
+- `/memory` → 查看长期记忆
+- `/project` → 查看项目上下文
+- `/analyze` → 诊断 workspace 状态
+- `/review` → 阶段复盘
+
+### 学习沉淀
 3. 在 `ai-lobster-community/index.html` 中开发
 4. 测试并验证
 5. commit 到 git
